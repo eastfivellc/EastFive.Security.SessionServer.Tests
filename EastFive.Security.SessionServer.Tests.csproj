@@ -42,45 +42,18 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BlackBarLabs.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Api.0.1.4\lib\BlackBarLabs.Api.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BlackBarLabs.Api.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Api.0.1.4\lib\BlackBarLabs.Api.Tests.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BlackBarLabs.Persistence, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Storage.0.2.1\lib\BlackBarLabs.Persistence.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BlackBarLabs.Persistence.Azure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Storage.0.2.1\lib\BlackBarLabs.Persistence.Azure.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BlackBarLabs.Security, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Security.0.4.3\lib\BlackBarLabs.Security.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="BlackBarLabs.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BlackBarLabs.Api.0.1.4\lib\BlackBarLabs.Web.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Edm, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Data.Edm.5.6.4\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    <Reference Include="Microsoft.Data.Edm, Version=5.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.Edm.5.8.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.OData, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Data.OData.5.6.4\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    <Reference Include="Microsoft.Data.OData, Version=5.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.OData.5.8.2\lib\net40\Microsoft.Data.OData.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Services.Client, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.4\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
+    <Reference Include="Microsoft.Data.Services.Client, Version=5.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.Services.Client.5.8.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Logging, Version=1.0.0.127, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Logging.1.0.0\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
@@ -94,13 +67,11 @@
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.3.2.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=6.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAzure.Storage.6.2.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=8.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.8.2.1\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -115,9 +86,8 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
+    <Reference Include="System.Spatial, Version=5.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Spatial.5.8.2\lib\net40\System.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -167,53 +137,21 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Helpers\AuthorizeHelpers.cs" />
-    <Compile Include="Helpers\ClaimHelpers.cs" />
+    <Compile Include="Actions\AccountLinksActions.cs" />
+    <Compile Include="Actions\PasswordCredentialActions.cs" />
+    <Compile Include="Actions\ClaimActions.cs" />
     <Compile Include="Helpers\CredentialHelpers.cs" />
-    <Compile Include="Helpers\AuthorizationHelpers.cs" />
-    <Compile Include="Helpers\SessionHelpers.cs" />
-    <Compile Include="Sessions\SessionBuilder.cs" />
+    <Compile Include="Actions\AuthenticationRequestActions.cs" />
+    <Compile Include="Actions\SessionHelpers.cs" />
+    <Compile Include="Mocks\TestCredential.cs" />
     <Compile Include="Tests\AuthorizeTests.cs" />
     <Compile Include="Tests\ClaimsTest.cs" />
     <Compile Include="Tests\CredentialTests.cs" />
+    <Compile Include="Utilities\SessionUtilities.cs" />
     <Compile Include="WorkflowTests.cs" />
     <Compile Include="Tests\AuthorizationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\SessionTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BlackBarLabs.Security.CredentialProvider.Facebook.Tests\BlackBarLabs.Security.CredentialProvider.Facebook.Tests.csproj">
-      <Project>{f5ceba79-64e7-4649-8631-e7c8159aa89a}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.Facebook.Tests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.Security.CredentialProvider.Doubles\BlackBarLabs.Security.CredentialProvider.Doubles.csproj">
-      <Project>{5a7bd241-b548-46f6-8c49-74e7e58a721b}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.Doubles</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.Authorization\BlackBarLabs.Security.Session.csproj">
-      <Project>{6E009BB4-A644-43A5-95C7-0A3918F61B04}</Project>
-      <Name>BlackBarLabs.Security.Session</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.CredentialProvider.Facebook\BlackBarLabs.Security.CredentialProvider.Facebook.csproj">
-      <Project>{90a432fc-e2ce-44d8-bc53-a6e4d9724b38}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.Facebook</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.CredentialProvider.ImplicitCreation\BlackBarLabs.Security.CredentialProvider.ImplicitCreation.csproj">
-      <Project>{dfc25fda-fc37-47d1-87dd-2a4adb659a69}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.ImplicitCreation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.CredentialProvider.OpenIdConnect\BlackBarLabs.Security.CredentialProvider.OpenIdConnect.csproj">
-      <Project>{6efa78c9-e660-42da-854f-91e7d10cb992}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.OpenIdConnect</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.CredentialProvider.Voucher\BlackBarLabs.Security.CredentialProvider.Voucher.csproj">
-      <Project>{939b50b2-eae2-454e-ac01-da162da292c6}</Project>
-      <Name>BlackBarLabs.Security.CredentialProvider.Voucher</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\BlackBarLabs.Security.SessionServer.Api\BlackBarLabs.Security.SessionServer.Api.csproj">
-      <Project>{4b275f63-3063-4913-bfef-06bc1ac4a9c0}</Project>
-      <Name>BlackBarLabs.Security.SessionServer.Api</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -224,6 +162,32 @@
       <DependentUpon>App.config</DependentUpon>
     </Content>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlackBarLabs.Api.Tests\BlackBarLabs.Api.Tests.csproj">
+      <Project>{fd0de0da-5fc5-43ca-a99b-8c64fc973ea1}</Project>
+      <Name>BlackBarLabs.Api.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlackBarLabs.Api\BlackBarLabs.Api.csproj">
+      <Project>{aaa1724b-0787-4ce1-bad5-e3c930db07c1}</Project>
+      <Name>BlackBarLabs.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlackBarLabs.Core\BlackBarLabs.Core.csproj">
+      <Project>{73088f1b-3aca-476b-aa45-b7d6660f1c73}</Project>
+      <Name>BlackBarLabs.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlackBarLabs.Security\BlackBarLabs.Security.csproj">
+      <Project>{17a2e027-c32a-41db-9b46-5222d55c0e26}</Project>
+      <Name>BlackBarLabs.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlackBarLabs.SessionServer\EastFive.Security.SessionServer.csproj">
+      <Project>{e2f3fcfb-89c8-47b3-b3d2-ae35e52a84fa}</Project>
+      <Name>EastFive.Security.SessionServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlackBarLabs.Web\BlackBarLabs.Web.csproj">
+      <Project>{5bb52391-2704-44c0-bc8a-dbbe31498814}</Project>
+      <Name>BlackBarLabs.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
