@@ -12,6 +12,7 @@ using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
 using System.Linq;
 using BlackBarLabs.Api.Extensions;
+using BlackBarLabs;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -67,8 +68,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                 Assert.AreEqual(authRequestLink.Method, authenticationRequestPosted.Method);
                                 Assert.AreEqual(redirectAddressDesired, authenticationRequestPosted.Redirect);
 
-                                // Fetching without a tokened session fails
-                                AssertApi.Unauthorized(await testSession.AuthenticationRequestGetAsync(postedResource,
+                                // Fetching without a tokened session succeeds... (per UI dev's whining ;-))
+                                AssertApi.Success(await testSession.AuthenticationRequestGetAsync(postedResource,
                                     (response, fetch) => response));
 
                                 ((TestSession)testSession).LoadToken(authenticationRequestPosted.JwtToken);
@@ -114,6 +115,9 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                                     (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
                                             });
                                         AssertApi.Redirect(responsePostAccountLink);
+                                        Assert.AreEqual(
+                                            postedResource.Id.UUID.ToString("N"),
+                                            responsePostAccountLink.Headers.Location.GetQueryParam("request_id"));
 
                                         return await testSession.AuthenticationRequestGetAsync(postedResource,
                                             (responseAuthRequestPopulatedGet, fetchPopulated) =>
@@ -123,8 +127,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                                 var userSes = new TestSession(authRequestPopulated.AuthorizationId.Value);
                                                 Assert.IsFalse(authRequestPopulated.JwtToken.IsNullOrWhiteSpace());
                                                 userSes.LoadToken(authRequestPopulated.JwtToken);
-
-                                                Assert.AreEqual(responsePostAccountLink.Headers.Location, authRequestPopulated.Redirect);
+                                                
                                                 return userSes;
                                             });
                                     });
