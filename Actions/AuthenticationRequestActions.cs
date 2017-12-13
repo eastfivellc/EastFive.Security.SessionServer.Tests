@@ -12,7 +12,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
 {
     public static class AuthorizationHelpers
     {
-        public static async Task<TResult> AuthenticationRequestPostAsync<TResult>(this ITestSession session,
+        public static async Task<TResult> SessionPostAsync<TResult>(this ITestSession session,
             WebId requestId,
             CredentialValidationMethodTypes method, AuthenticationActions action, Uri redirectAddressDesired,
             Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
@@ -30,7 +30,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 () => response.GetContent<Resources.Session>());
         }
 
-        public static async Task<TResult> AuthenticationRequestLinkPostAsync<TResult>(this ITestSession session,
+        public static async Task<TResult> IntegrationPostAsync<TResult>(this ITestSession session,
             WebId requestId,
             CredentialValidationMethodTypes method, Guid authorizationId, Uri redirect,
             Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
@@ -44,7 +44,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 Redirect = redirect,
             };
 
-            var response = await session.PostAsync<Controllers.SessionController>(resource);
+            var response = await session.PostAsync<Controllers.IntegrationController>(resource);
             return callback(response, resource,
                 () => response.GetContent<Resources.Session>());
         }

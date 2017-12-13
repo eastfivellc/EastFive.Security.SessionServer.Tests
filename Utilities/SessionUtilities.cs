@@ -54,9 +54,9 @@ namespace EastFive.Security.SessionServer.Tests
 
         }
 
-        public static async Task<TResult> StartAsync<TResult>(Guid sessionActorId, Func<TestSession, TResult> callback)
+        public static TResult Start<TResult>(Guid sessionActorId, Func<TestSession, TResult> callback)
         {
-            await InitAsync();
+            // await InitAsync();
             return TestSession.Start(sessionActorId,
                 (session) =>
                 {

@@ -57,7 +57,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                         var superAdminSession = testSession.GetSuperAdmin();
 
                         var redirectAddressDesired = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com");
-                        var userSession = await await testSession.AuthenticationRequestPostAsync(authRequestLink.Id,
+                        var userSession = await await testSession.SessionPostAsync(authRequestLink.Id,
                             authRequestLink.Method, AuthenticationActions.signin, redirectAddressDesired,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
@@ -135,7 +135,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
 
                         var redirectAddressDesiredLink = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com");
-                        Assert.IsTrue(await await userSession.AuthenticationRequestLinkPostAsync(Guid.NewGuid(),
+                        Assert.IsTrue(await await userSession.IntegrationPostAsync(Guid.NewGuid(),
                             authRequestLink.Method, userSession.Id, redirectAddressDesiredLink,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
@@ -160,30 +160,6 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                             (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
                                     });
                                 AssertApi.Redirect(responseWithoutAccountLink);
-                                
-                                Assert.IsTrue(await await userSession.AuthenticationRequestPostAsync(Guid.NewGuid(),
-                                    authRequestLink.Method, AuthenticationActions.signin, redirectAddressDesired,
-                                    async (responsePostedInner, postedResourceInner, fetchBodySignin) =>
-                                    {
-                                        AssertApi.Created(responsePosted);
-                                        var authenticationRequestSignin = fetchBodySignin();
-                                        
-                                        var tokenSignin = ProvideLoginMock.GetToken(userIdProvider);
-                                        var responseSignin = await testSession.GetAsync<Controllers.ResponseController>(
-                                            new Controllers.ResponseResult
-                                            {
-                                                method = authRequestLink.Method,
-                                            },
-                                            (request) =>
-                                            {
-                                                request.RequestUri = authenticationRequestPosted.Login.ParseQuery().Aggregate(
-                                                    request.RequestUri.AddQuery(ProvideLoginMock.extraParamToken, token),
-                                                    (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
-                                            });
-                                        AssertApi.Redirect(responseSignin);
-
-                                        return true;
-                                    }));
 
                                 return true;
                             }));
