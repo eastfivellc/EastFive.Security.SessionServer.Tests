@@ -56,33 +56,37 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
                         var superAdminSession = testSession.GetSuperAdmin();
 
-                        var redirectAddressDesired = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com");
+                        var redirectAddressDesired = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/App");
+                        var redirectAddressDesiredPostLogout = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/Login");
                         var userSession = await await testSession.SessionPostAsync(authRequestLink.Id,
-                            authRequestLink.Method, AuthenticationActions.signin, redirectAddressDesired,
+                                authRequestLink.Method, AuthenticationActions.signin, 
+                                redirectAddressDesired, redirectAddressDesiredPostLogout,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
                                 AssertApi.Created(responsePosted);
                                 var authenticationRequestPosted = fetchBody();
                                 Assert.IsFalse(authenticationRequestPosted.AuthorizationId.HasValue);
-                                Assert.IsFalse(authenticationRequestPosted.JwtToken.IsNullOrWhiteSpace());
+                                Assert.IsFalse(authenticationRequestPosted.Token.IsNullOrWhiteSpace());
                                 Assert.AreEqual(authRequestLink.Method, authenticationRequestPosted.Method);
-                                Assert.AreEqual(redirectAddressDesired, authenticationRequestPosted.Redirect);
+                                Assert.AreEqual(redirectAddressDesired, authenticationRequestPosted.LocationAuthenticationReturn);
+                                Assert.AreEqual(redirectAddressDesiredPostLogout, authenticationRequestPosted.LocationLogoutReturn);
 
                                 // Fetching without a tokened session succeeds... (per UI dev's whining ;-))
                                 AssertApi.Success(await testSession.AuthenticationRequestGetAsync(postedResource,
                                     (response, fetch) => response));
 
-                                ((TestSession)testSession).LoadToken(authenticationRequestPosted.JwtToken);
+                                ((TestSession)testSession).LoadToken(authenticationRequestPosted.Token);
                                 return await await testSession.AuthenticationRequestGetAsync(postedResource,
                                     async (responseAuthRequestGet, fetch) =>
                                     {
                                         AssertApi.Success(responseAuthRequestGet);
                                         var value = fetch();
                                         Assert.IsFalse(value.AuthorizationId.HasValue);
-                                        Assert.IsTrue(value.JwtToken.IsNullOrWhiteSpace());
+                                        Assert.IsTrue(value.Token.IsNullOrWhiteSpace());
                                         Assert.AreEqual(authRequestLink.Method, value.Method);
                                         Assert.IsTrue(value.RefreshToken.IsNullOrWhiteSpace());
-                                        Assert.AreEqual(redirectAddressDesired, value.Redirect);
+                                        Assert.AreEqual(redirectAddressDesired, value.LocationAuthenticationReturn);
+                                        Assert.AreEqual(redirectAddressDesiredPostLogout, value.LocationLogoutReturn);
 
                                         var userIdProvider = Guid.NewGuid().ToString("N");
                                         var token = ProvideLoginMock.GetToken(userIdProvider);
@@ -93,7 +97,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                             },
                                             (request) =>
                                             {
-                                                request.RequestUri = value.Login.ParseQuery().Aggregate(
+                                                request.RequestUri = value.LocationAuthentication.ParseQuery().Aggregate(
                                                     request.RequestUri.AddQuery(ProvideLoginMock.extraParamToken, token),
                                                     (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
                                             });
@@ -110,7 +114,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                             },
                                             (request) =>
                                             {
-                                                request.RequestUri = value.Login.ParseQuery().Aggregate(
+                                                request.RequestUri = value.LocationAuthentication.ParseQuery().Aggregate(
                                                     request.RequestUri.AddQuery(ProvideLoginMock.extraParamToken, token),
                                                     (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
                                             });
@@ -125,8 +129,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                                 var authRequestPopulated = fetchPopulated();
                                                 Assert.IsTrue(authRequestPopulated.AuthorizationId.HasValue);
                                                 var userSes = new TestSession(authRequestPopulated.AuthorizationId.Value);
-                                                Assert.IsFalse(authRequestPopulated.JwtToken.IsNullOrWhiteSpace());
-                                                userSes.LoadToken(authRequestPopulated.JwtToken);
+                                                Assert.IsFalse(authRequestPopulated.Token.IsNullOrWhiteSpace());
+                                                userSes.LoadToken(authRequestPopulated.Token);
                                                 
                                                 return userSes;
                                             });
@@ -141,10 +145,9 @@ namespace EastFive.Security.SessionServer.Api.Tests
                             {
                                 AssertApi.Created(responsePosted);
                                 var authenticationRequestPosted = fetchBody();
-                                Assert.AreEqual(userSession.Id, authenticationRequestPosted.AuthorizationId.Value);
-                                Assert.IsFalse(authenticationRequestPosted.JwtToken.IsNullOrWhiteSpace());
+                                Assert.AreEqual(userSession.Id, authenticationRequestPosted.AuthorizationId);
                                 Assert.AreEqual(authRequestLink.Method, authenticationRequestPosted.Method);
-                                Assert.AreEqual(redirectAddressDesiredLink, authenticationRequestPosted.Redirect);
+                                Assert.AreEqual(redirectAddressDesiredLink, authenticationRequestPosted.LocationAuthenticationReturn);
 
                                 var userIdProvider = Guid.NewGuid().ToString("N");
                                 var token = ProvideLoginMock.GetToken(userIdProvider);
@@ -155,7 +158,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                     },
                                     (request) =>
                                     {
-                                        request.RequestUri = authenticationRequestPosted.Login.ParseQuery().Aggregate(
+                                        request.RequestUri = authenticationRequestPosted.LocationAuthentication.ParseQuery().Aggregate(
                                             request.RequestUri.AddQuery(ProvideLoginMock.extraParamToken, token),
                                             (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
                                     });

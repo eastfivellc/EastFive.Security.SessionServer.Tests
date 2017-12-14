@@ -14,7 +14,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
     {
         public static async Task<TResult> SessionPostAsync<TResult>(this ITestSession session,
             WebId requestId,
-            CredentialValidationMethodTypes method, AuthenticationActions action, Uri redirectAddressDesired,
+            CredentialValidationMethodTypes method, AuthenticationActions action, 
+            Uri redirectAddressDesired, Uri redirectAddressDesiredPostLogout,
             Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
         {
             //Create the order via post
@@ -22,7 +23,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
             {
                 Id = requestId,
                 Method = method,
-                Redirect = redirectAddressDesired,
+                LocationAuthenticationReturn = redirectAddressDesired,
+                LocationLogoutReturn = redirectAddressDesiredPostLogout,
             };
 
             var response = await session.PostAsync<Controllers.SessionController>(resource);
@@ -33,7 +35,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
         public static async Task<TResult> IntegrationPostAsync<TResult>(this ITestSession session,
             WebId requestId,
             CredentialValidationMethodTypes method, Guid authorizationId, Uri redirect,
-            Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
+            Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
         {
             //Create the order via post
             var resource = new Resources.Integration()
@@ -41,12 +43,12 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 Id = requestId,
                 Method = method,
                 AuthorizationId = authorizationId,
-                Redirect = redirect,
+                LocationAuthenticationReturn = redirect,
             };
 
             var response = await session.PostAsync<Controllers.IntegrationController>(resource);
             return callback(response, resource,
-                () => response.GetContent<Resources.Session>());
+                () => response.GetContent<Resources.Integration>());
         }
 
         public static async Task<TResult> AuthenticationRequestGetAsync<TResult>(this ITestSession session,

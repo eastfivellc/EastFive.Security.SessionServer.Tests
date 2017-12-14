@@ -67,7 +67,7 @@ namespace EastFive.Security.SessionServer.Tests
 
         public static ITestSession GetSuperAdmin(this ITestSession session)
         {
-            return Web.Configuration.Settings.GetString(EastFive.Api.Configuration.SecurityDefinitions.SiteAdminAuthorization,
+            return Web.Configuration.Settings.GetString(EastFive.Api.AppSettings.SiteAdminAuthorization,
                 (siteAdminAuthToken) =>
                 {
                     var superAdminSession = new TestSession(siteAdminAuthToken);

@@ -138,13 +138,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Actions\AccountLinksActions.cs" />
+    <Compile Include="Actions\RolesActions.cs" />
     <Compile Include="Actions\PasswordCredentialActions.cs" />
     <Compile Include="Actions\ClaimActions.cs" />
     <Compile Include="Helpers\CredentialHelpers.cs" />
     <Compile Include="Actions\AuthenticationRequestActions.cs" />
     <Compile Include="Actions\SessionHelpers.cs" />
     <Compile Include="Mocks\TestCredential.cs" />
-    <Compile Include="Tests\AuthorizeTests.cs" />
+    <Compile Include="Tests\RolesTest.cs" />
     <Compile Include="Tests\ClaimsTest.cs" />
     <Compile Include="Tests\CredentialTests.cs" />
     <Compile Include="Utilities\SessionUtilities.cs" />
