@@ -145,6 +145,7 @@
     <Compile Include="Actions\AuthenticationRequestActions.cs" />
     <Compile Include="Actions\SessionHelpers.cs" />
     <Compile Include="Mocks\TestCredential.cs" />
+    <Compile Include="Tests\IntegrationTests.cs" />
     <Compile Include="Tests\RolesTest.cs" />
     <Compile Include="Tests\ClaimsTest.cs" />
     <Compile Include="Tests\CredentialTests.cs" />

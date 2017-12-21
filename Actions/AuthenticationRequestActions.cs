@@ -63,5 +63,42 @@ namespace EastFive.Security.SessionServer.Api.Tests
             return callback(response,
                 () => response.GetContent<Resources.Session>());
         }
+        
+        public static async Task<TResult> IntegrationGetAsync<TResult>(this ITestSession session,
+            WebId integrationId,
+            Func<HttpResponseMessage, Func<Resources.Integration>, TResult> callback)
+        {
+            var query = new Resources.Queries.IntegrationQuery
+            {
+                Id = integrationId,
+            };
+            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            return callback(response,
+                () => response.GetContent<Resources.Integration>());
+        }
+
+        public static async Task<TResult> IntegrationGetByAuthorizationAsync<TResult>(this ITestSession session,
+            WebId actorId,
+            Func<HttpResponseMessage, Func<Resources.Integration[]>, TResult> callback)
+        {
+            var query = new Resources.Queries.IntegrationQuery
+            {
+                ActorId = actorId,
+            };
+            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            return callback(response,
+                () => response.GetContentMultipart<Resources.Integration>().ToArray());
+        }
+
+        public static async Task<HttpResponseMessage> IntegrationDeleteAsync(this ITestSession session,
+            WebId integrationId)
+        {
+            var query = new Resources.Queries.IntegrationQuery
+            {
+                Id = integrationId,
+            };
+            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            return response;
+        }
     }
 }
