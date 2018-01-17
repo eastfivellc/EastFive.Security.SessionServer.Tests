@@ -13,6 +13,7 @@ using EastFive.Security.SessionServer.Tests;
 using System.Linq;
 using BlackBarLabs.Api.Extensions;
 using BlackBarLabs;
+using EastFive.Extensions;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
