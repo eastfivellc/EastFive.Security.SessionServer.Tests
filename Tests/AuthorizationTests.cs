@@ -11,8 +11,6 @@ using BlackBarLabs.Extensions;
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
 using System.Linq;
-using BlackBarLabs.Api.Extensions;
-using BlackBarLabs;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {

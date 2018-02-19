@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using BlackBarLabs.Security.Crypto;
-using BlackBarLabs.Api.Tests;
-using BlackBarLabs.Extensions;
-
+using EastFive.Extensions;
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
-using System.Linq;
-using BlackBarLabs.Api.Extensions;
-using BlackBarLabs;
-using EastFive.Extensions;
+using BlackBarLabs.Api.Tests;
+
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
