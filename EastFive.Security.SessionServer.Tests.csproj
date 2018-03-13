@@ -182,13 +182,13 @@
       <Project>{17a2e027-c32a-41db-9b46-5222d55c0e26}</Project>
       <Name>BlackBarLabs.Security</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.SessionServer\EastFive.Security.SessionServer.csproj">
-      <Project>{e2f3fcfb-89c8-47b3-b3d2-ae35e52a84fa}</Project>
-      <Name>EastFive.Security.SessionServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BlackBarLabs.Web\BlackBarLabs.Web.csproj">
       <Project>{5bb52391-2704-44c0-bc8a-dbbe31498814}</Project>
       <Name>BlackBarLabs.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EastFive.SessionServer\EastFive.Security.SessionServer.csproj">
+      <Project>{e2f3fcfb-89c8-47b3-b3d2-ae35e52a84fa}</Project>
+      <Name>EastFive.Security.SessionServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
