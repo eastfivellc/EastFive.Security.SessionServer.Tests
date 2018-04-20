@@ -140,7 +140,7 @@
     <Compile Include="Actions\RolesActions.cs" />
     <Compile Include="Actions\PasswordCredentialActions.cs" />
     <Compile Include="Actions\ClaimActions.cs" />
-    <Compile Include="Helpers\CredentialHelpers.cs" />
+    <Compile Include="Tests\Helpers\CredentialHelpers.cs" />
     <Compile Include="Actions\AuthenticationRequestActions.cs" />
     <Compile Include="Actions\SessionHelpers.cs" />
     <Compile Include="Mocks\TestCredential.cs" />
