@@ -51,6 +51,26 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 () => response.GetContent<Resources.Integration>());
         }
 
+        public static async Task<TResult> IntegrationPutAsync<TResult>(this ITestSession session,
+           WebId requestId,
+           CredentialValidationMethodTypes method, Guid authorizationId, Uri redirect,
+           IDictionary<string, Resources.AuthorizationRequest.CustomParameter> userParams,
+           Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
+        {
+            var resource = new Resources.Integration()
+            {
+                Id = requestId,
+                Method = method,
+                AuthorizationId = authorizationId,
+                LocationAuthenticationReturn = redirect,
+                UserParameters = userParams
+            };
+
+            var response = await session.PutAsync<Controllers.IntegrationController>(resource);
+            return callback(response, resource,
+                () => response.GetContent<Resources.Integration>());
+        }
+
         public static async Task<TResult> AuthenticationRequestGetAsync<TResult>(this ITestSession session,
             WebId authenticationRequestId,
             Func<HttpResponseMessage, Func<Resources.Session>, TResult> callback)
