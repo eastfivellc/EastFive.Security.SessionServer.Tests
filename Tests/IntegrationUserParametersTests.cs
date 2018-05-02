@@ -60,41 +60,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                             Assert.AreEqual(authRequestLink.Method, value.Method);
                                             Assert.AreEqual(redirectAddressDesired, value.LocationAuthenticationReturn);
 
-                                            var userIdProvider = Guid.NewGuid().ToString("N");
-                                            var token = ProvideLoginMock.GetToken(userIdProvider);
-                                            var responseAuthenicateIntegration = await userSession.GetAsync<Controllers.ResponseController>(
-                                                new Controllers.ResponseResult
-                                                {
-                                                    method = authRequestLink.Method,
-                                                },
-                                                (request) =>
-                                                {
-                                                    request.RequestUri = value.LocationAuthentication.ParseQuery().Aggregate(
-                                                        request.RequestUri.AddQuery(ProvideLoginMock.extraParamToken, token),
-                                                        (url, queryValue) => url.AddQuery(queryValue.Key, queryValue.Value));
-                                                });
-                                            AssertApi.Redirect(responseAuthenicateIntegration);
-
-                                            Assert.AreEqual(
-                                                postedResource.Id.UUID.ToString(),
-                                                responseAuthenicateIntegration.Headers.Location.GetQueryParam("request_id"));
-
-                                            AssertApi.Success(await userSession.IntegrationGetAsync(postedResource,
-                                                (responseAuthRequestPopulatedGet, fetchPopulated) =>
-                                                {
-                                                    var authRequestPopulated = fetchPopulated();
-                                                    Assert.IsFalse(authRequestPopulated.AuthorizationId.IsDefault());
-                                                    return responseAuthRequestPopulatedGet;
-                                                }));
-
-                                            Assert.AreEqual(1, await userSession.IntegrationGetByAuthorizationAsync(authorizationId,
-                                                (responseAuthRequestPopulatedGet, fetchPopulated) => fetchPopulated().Length));
-
-                                            AssertApi.Success(await userSession.IntegrationDeleteAsync(postedResource));
-
-
                                             var userParams = new Dictionary<string, Resources.AuthorizationRequest.CustomParameter>();
-                                            userParams.Add("PushPMPFileToEHR", new Resources.AuthorizationRequest.CustomParameter { Value = "true" });
+                                            userParams.Add("push_pmp_file_to_ehr", new Resources.AuthorizationRequest.CustomParameter { Value = "true" });
                                             Assert.IsTrue(await userSession.IntegrationPutAsync(authRequestLink.Id,
                                                authRequestLink.Method, authorizationId,
                                                redirectAddressDesired,
@@ -110,11 +77,10 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                                 {
                                                     AssertApi.Success(intGet);
                                                     var fetchValue = intFetch();
-                                                    Assert.IsTrue(fetchValue.UserParameters.ContainsKey("PushPMPFileToEHR"));
-                                                    Assert.AreEqual("true", fetchValue.UserParameters["PushPMPFileToEHR"].Value);
+                                                    Assert.IsTrue(fetchValue.UserParameters.ContainsKey("push_pmp_file_to_ehr"));
+                                                    Assert.AreEqual("true", fetchValue.UserParameters["push_pmp_file_to_ehr"].Value);
                                                     return true;
                                                 }));
-
 
                                             return true;
                                         }));
