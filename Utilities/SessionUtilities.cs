@@ -35,6 +35,7 @@ namespace EastFive.Security.SessionServer.Tests
                     {
                         ProvideLoginMock.InitializeAsync,
                     },
+                    null,
                 () => true,
                 (why) =>
                 {
