@@ -8,6 +8,7 @@ using EastFive.Security.SessionServer.Tests;
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Api.Tests;
 using System.Linq;
+using EastFive.Security.SessionServer;
 
 namespace BlackBarLabs.Security.AuthorizationServer.API.Tests
 {
@@ -33,7 +34,8 @@ namespace BlackBarLabs.Security.AuthorizationServer.API.Tests
                             // Create Auth resource
                             var authentication = Guid.NewGuid();
                             var userSession = new TestSession(authentication);
-                            AssertApi.Created(await userSession.CredentialPostAsync(authRequestLink.Method, userIdProvider, authentication,
+                            Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
+                            AssertApi.Created(await userSession.CredentialPostAsync(val, userIdProvider, authentication,
                                 (response, resource) => response));
 
                             Assert.AreEqual(0, await userSession.RolesGetByActorAsync(authentication,
