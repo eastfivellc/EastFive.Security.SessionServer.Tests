@@ -33,7 +33,7 @@ namespace BlackBarLabs.Security.AuthorizationServer.API.Tests
                             // Create Auth resource
                             var authentication = Guid.NewGuid();
                             var userSession = new TestSession(authentication);
-                            AssertApi.Created(await userSession.CredentialPostAsync(authRequestLink.Method, userIdProvider, authentication,
+                            AssertApi.Created(await userSession.CredentialPostAsync(authRequestLink.CredentialValidationMethodType, userIdProvider, authentication,
                                 (response, resource) => response));
 
                             Assert.AreEqual(0, await userSession.RolesGetByActorAsync(authentication,

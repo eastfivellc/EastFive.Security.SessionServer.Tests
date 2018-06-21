@@ -37,14 +37,14 @@ namespace EastFive.Security.SessionServer.Api.Tests
                         var authorizationId = Guid.NewGuid();
                         var userSession = new TestSession(authorizationId);
                         Assert.IsTrue(await await userSession.IntegrationPostAsync(authRequestLink.Id, 
-                                authRequestLink.Method, authorizationId,
+                                authRequestLink.CredentialValidationMethodType, authorizationId,
                                 redirectAddressDesired, 
                             async (responsePosted, postedResource, fetchBody) =>
                             {
                                 AssertApi.Created(responsePosted);
                                 var authenticationRequestPosted = fetchBody();
                                 Assert.IsFalse(authenticationRequestPosted.AuthorizationId.IsDefault());
-                                Assert.AreEqual(authRequestLink.Method, authenticationRequestPosted.Method);
+                                Assert.AreEqual(Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), authenticationRequestPosted.Method);
                                 Assert.AreEqual(redirectAddressDesired, authenticationRequestPosted.LocationAuthenticationReturn);
                                 
                                 Assert.IsTrue(await await userSession.IntegrationGetAsync(postedResource,
@@ -53,7 +53,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         AssertApi.Success(responseAuthRequestGet);
                                         var value = fetch();
                                         Assert.IsFalse(value.AuthorizationId.IsDefault());
-                                        Assert.AreEqual(authRequestLink.Method, value.Method);
+                                        Assert.AreEqual(Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), value.Method);
                                         Assert.AreEqual(redirectAddressDesired, value.LocationAuthenticationReturn);
 
                                         var userIdProvider = Guid.NewGuid().ToString("N");
@@ -61,7 +61,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         var responseAuthenicateIntegration = await userSession.GetAsync<Controllers.ResponseController>(
                                             new Controllers.ResponseResult
                                             {
-                                                method = authRequestLink.Method,
+                                                method = authRequestLink.CredentialValidationMethodType,
                                             },
                                             (request) =>
                                             {

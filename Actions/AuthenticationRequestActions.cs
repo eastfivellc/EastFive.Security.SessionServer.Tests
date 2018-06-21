@@ -22,7 +22,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
             var resource = new Resources.Session()
             {
                 Id = requestId,
-                Method = method,
+                Method = Enum.GetName(typeof(CredentialValidationMethodTypes), method),
                 LocationAuthenticationReturn = redirectAddressDesired,
                 LocationLogoutReturn = redirectAddressDesiredPostLogout,
             };
@@ -41,7 +41,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
             var resource = new Resources.Integration()
             {
                 Id = requestId,
-                Method = method,
+                Method = Enum.GetName(typeof(CredentialValidationMethodTypes), method),
                 AuthorizationId = authorizationId,
                 LocationAuthenticationReturn = redirect,
             };
