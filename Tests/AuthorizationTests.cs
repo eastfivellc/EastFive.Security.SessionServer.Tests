@@ -57,7 +57,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                         var redirectAddressDesired = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/App");
                         var redirectAddressDesiredPostLogout = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/Login");
                         var userSession = await await testSession.SessionPostAsync(authRequestLink.Id,
-                                authRequestLink.CredentialValidationMethodType, AuthenticationActions.signin, 
+                                Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), AuthenticationActions.signin, 
                                 redirectAddressDesired, redirectAddressDesiredPostLogout,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
@@ -88,10 +88,11 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
                                         var userIdProvider = Guid.NewGuid().ToString("N");
                                         var token = ProvideLoginMock.GetToken(userIdProvider);
+                                        Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
                                         var responseWithoutAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
                                             new Controllers.ResponseResult
                                             {
-                                                method = authRequestLink.CredentialValidationMethodType,
+                                                method = val,
                                             },
                                             (request) =>
                                             {
@@ -102,13 +103,13 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         AssertApi.Conflict(responseWithoutAccountLink);
 
                                         var authentication = Guid.NewGuid();
-                                        AssertApi.Created(await superAdminSession.CredentialPostAsync(authRequestLink.CredentialValidationMethodType, userIdProvider, authentication,
+                                        AssertApi.Created(await superAdminSession.CredentialPostAsync(val, userIdProvider, authentication,
                                             (response, resource) => response));
 
                                         var responsePostAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
                                             new Controllers.ResponseResult
                                             {
-                                                method = authRequestLink.CredentialValidationMethodType,
+                                                method = val,
                                             },
                                             (request) =>
                                             {
@@ -138,7 +139,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
                         var redirectAddressDesiredLink = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com");
                         Assert.IsTrue(await await userSession.IntegrationPostAsync(Guid.NewGuid(),
-                            authRequestLink.CredentialValidationMethodType, userSession.Id, redirectAddressDesiredLink,
+                            Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), userSession.Id, redirectAddressDesiredLink,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
                                 AssertApi.Created(responsePosted);
@@ -149,10 +150,11 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
                                 var userIdProvider = Guid.NewGuid().ToString("N");
                                 var token = ProvideLoginMock.GetToken(userIdProvider);
+                                Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
                                 var responseWithoutAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
                                     new Controllers.ResponseResult
                                     {
-                                        method = authRequestLink.CredentialValidationMethodType,
+                                        method = val
                                     },
                                     (request) =>
                                     {

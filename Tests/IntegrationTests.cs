@@ -36,8 +36,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                         var redirectAddressDesiredPostLogout = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/Login");
                         var authorizationId = Guid.NewGuid();
                         var userSession = new TestSession(authorizationId);
-                        Assert.IsTrue(await await userSession.IntegrationPostAsync(authRequestLink.Id, 
-                                authRequestLink.CredentialValidationMethodType, authorizationId,
+                        Assert.IsTrue(await await userSession.IntegrationPostAsync(authRequestLink.Id,
+                                Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), authorizationId,
                                 redirectAddressDesired, 
                             async (responsePosted, postedResource, fetchBody) =>
                             {
@@ -58,10 +58,11 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
                                         var userIdProvider = Guid.NewGuid().ToString("N");
                                         var token = ProvideLoginMock.GetToken(userIdProvider);
+                                        Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
                                         var responseAuthenicateIntegration = await userSession.GetAsync<Controllers.ResponseController>(
                                             new Controllers.ResponseResult
                                             {
-                                                method = authRequestLink.CredentialValidationMethodType,
+                                                method = val,
                                             },
                                             (request) =>
                                             {

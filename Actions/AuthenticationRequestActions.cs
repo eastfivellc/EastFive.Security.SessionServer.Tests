@@ -14,7 +14,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
     {
         public static async Task<TResult> SessionPostAsync<TResult>(this ITestSession session,
             WebId requestId,
-            CredentialValidationMethodTypes method, AuthenticationActions action, 
+            string method, AuthenticationActions action, 
             Uri redirectAddressDesired, Uri redirectAddressDesiredPostLogout,
             Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
         {
@@ -34,7 +34,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
 
         public static async Task<TResult> IntegrationPostAsync<TResult>(this ITestSession session,
             WebId requestId,
-            CredentialValidationMethodTypes method, Guid authorizationId, Uri redirect,
+            string method, Guid authorizationId, Uri redirect,
             Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
         {
             //Create the order via post
@@ -47,6 +47,26 @@ namespace EastFive.Security.SessionServer.Api.Tests
             };
 
             var response = await session.PostAsync<Controllers.IntegrationController>(resource);
+            return callback(response, resource,
+                () => response.GetContent<Resources.Integration>());
+        }
+
+        public static async Task<TResult> IntegrationPutAsync<TResult>(this ITestSession session,
+           WebId requestId,
+           string method, Guid authorizationId, Uri redirect,
+           IDictionary<string, Resources.AuthorizationRequest.CustomParameter> userParams,
+           Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
+        {
+            var resource = new Resources.Integration()
+            {
+                Id = requestId,
+                Method = method,
+                AuthorizationId = authorizationId,
+                LocationAuthenticationReturn = redirect,
+                UserParameters = userParams
+            };
+
+            var response = await session.PutAsync<Controllers.IntegrationController>(resource);
             return callback(response, resource,
                 () => response.GetContent<Resources.Integration>());
         }

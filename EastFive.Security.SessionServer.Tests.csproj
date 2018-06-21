@@ -146,6 +146,7 @@
     <Compile Include="Mocks\TestCredential.cs" />
     <Compile Include="Tests\ActAsUserTests.cs" />
     <Compile Include="Tests\IntegrationTests.cs" />
+    <Compile Include="Tests\IntegrationUserParametersTests.cs" />
     <Compile Include="Tests\RolesTest.cs" />
     <Compile Include="Tests\ClaimsTest.cs" />
     <Compile Include="Tests\CredentialTests.cs" />
