@@ -15,10 +15,9 @@ namespace EastFive.Security.SessionServer.Tests
     {
         private static async Task InitAsync()
         {
-            var mailService = new MockMailService();
-            mailService.SendEmailMessageCallback =
+            var mailService = new MockMailService(
                 (templateName, toAddress, toName, fromAddress, fromName,
-                 subject, substitutionsSingle) => true.ToTask();
+                 subject, substitutionsSingle) => true.ToTask());
             var timeService = new BlackBarLabs.Api.Tests.Mocks.MockTimeService();
             var httpConfig = new HttpConfiguration();
             EastFive.Api.Services.ServiceConfiguration.Initialize(httpConfig,
