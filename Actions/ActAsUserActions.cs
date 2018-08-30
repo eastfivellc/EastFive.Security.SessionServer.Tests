@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using BlackBarLabs.Api.Tests;
 using System.Net.Http;
 using BlackBarLabs.Api.Resources;
+using EastFive.Api.Azure.Credentials.Resources;
+using EastFive.Api.Azure.Credentials.Resources.Queries;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -14,27 +17,27 @@ namespace EastFive.Security.SessionServer.Api.Tests
     {
         public static async Task<TResult> ActAsUserGetAsync<TResult>(this ITestSession session,
             string redirectUri,
-            Func<HttpResponseMessage, Func<Resources.UserInfo[]>, TResult> callback)
+            Func<HttpResponseMessage, Func<UserInfo[]>, TResult> callback)
         {
-            var query = new Resources.Queries.ActAsUserQuery
+            var query = new ActAsUserQuery
             {
                 RedirectUri = redirectUri,
             };
-            var response = await session.GetAsync<Controllers.ActAsUserController>(query);
+            var response = await session.GetAsync<ActAsUserController>(query);
             return callback(response,
-                () => response.GetContentMultipart<Resources.UserInfo>().ToArray());
+                () => response.GetContentMultipart<UserInfo>().ToArray());
         }
 
         public static async Task<TResult> ActAsUserGetAsync<TResult>(this ITestSession session,
             Guid actorId, string redirectUri,
             Func<HttpResponseMessage, TResult> callback)
         {
-            var query = new Resources.Queries.ActAsUserQuery
+            var query = new ActAsUserQuery
             {
                 ActorId = actorId,
                 RedirectUri = redirectUri,
             };
-            var response = await session.GetAsync<Controllers.ActAsUserController>(query);
+            var response = await session.GetAsync<ActAsUserController>(query);
             return callback(response);
         }
     }

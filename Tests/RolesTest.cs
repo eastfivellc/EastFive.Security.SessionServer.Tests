@@ -9,6 +9,7 @@ using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Api.Tests;
 using System.Linq;
 using EastFive.Security.SessionServer;
+using EastFive.Api.Azure.Credentials;
 
 namespace BlackBarLabs.Security.AuthorizationServer.API.Tests
 {
