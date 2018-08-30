@@ -9,7 +9,8 @@ using EastFive.Extensions;
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
 using BlackBarLabs.Api.Tests;
-
+using EastFive.Api.Azure.Credentials;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -59,8 +60,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         var userIdProvider = Guid.NewGuid().ToString("N");
                                         var token = ProvideLoginMock.GetToken(userIdProvider);
                                         Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
-                                        var responseAuthenicateIntegration = await userSession.GetAsync<Controllers.ResponseController>(
-                                            new Controllers.ResponseResult
+                                        var responseAuthenicateIntegration = await userSession.GetAsync<ResponseController>(
+                                            new ResponseResult
                                             {
                                                 method = val,
                                             },

@@ -8,6 +8,8 @@ using BlackBarLabs.Api.Tests;
 using System.Net.Http;
 using BlackBarLabs.Api.Resources;
 using BlackBarLabs;
+using EastFive.Api.Azure.Credentials;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -17,11 +19,11 @@ namespace EastFive.Security.SessionServer.Api.Tests
             CredentialValidationMethodTypes method, IDictionary<string, string> extraParams,
             Func<HttpResponseMessage, TResult> callback)
         {
-            var query = new Controllers.ResponseResult
+            var query = new ResponseResult
             {
                 method = method,
             };
-            var response = await session.GetAsync<Controllers.ResponseController>(query,
+            var response = await session.GetAsync<ResponseController>(query,
                 (request) =>
                 {
                     request.RequestUri = extraParams.Aggregate(

@@ -14,54 +14,54 @@ namespace EastFive.Security.SessionServer.Api.Tests
     {
         public static async Task<TResult> RolesPostAsync<TResult>(this ITestSession session,
             WebId actorId, string role,
-            Func<HttpResponseMessage, Resources.Role, TResult> callback)
+            Func<HttpResponseMessage, EastFive.Api.Azure.Resources.Role, TResult> callback)
         {
             //Create the order via post
-            var resource = new Resources.Role()
+            var resource = new EastFive.Api.Azure.Resources.Role()
             {
                 Id = Guid.NewGuid(),
                 Actor = actorId,
                 Name = role,
             };
 
-            var response = await session.PostAsync<Controllers.RoleController>(resource);
+            var response = await session.PostAsync<EastFive.Api.Azure.Controllers.RoleController>(resource);
             return callback(response, resource);
         }
         
         public static async Task<TResult> RolesGetByIdAsync<TResult>(this ITestSession session,
             WebId roleId,
-            Func<HttpResponseMessage, Func<Resources.Role>, TResult> callback)
+            Func<HttpResponseMessage, Func<EastFive.Api.Azure.Resources.Role>, TResult> callback)
         {
-            var query = new Resources.RoleQuery
+            var query = new EastFive.Api.Azure.Resources.Queries.RoleQuery
             {
                 Id = roleId,
             };
-            var response = await session.GetAsync<Controllers.RoleController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Controllers.RoleController>(query);
             return callback(response,
-                () => response.GetContent<Resources.Role>());
+                () => response.GetContent<EastFive.Api.Azure.Resources.Role>());
         }
 
         public static async Task<TResult> RolesGetByActorAsync<TResult>(this ITestSession session,
             WebId actorId,
-            Func<HttpResponseMessage, Func<Resources.Role[]>, TResult> callback)
+            Func<HttpResponseMessage, Func<EastFive.Api.Azure.Resources.Role[]>, TResult> callback)
         {
-            var query = new Resources.RoleQuery
+            var query = new EastFive.Api.Azure.Resources.Queries.RoleQuery
             {
                 Actor = actorId,
             };
-            var response = await session.GetAsync<Controllers.RoleController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Controllers.RoleController>(query);
             return callback(response,
-                () => response.GetContentMultipart<Resources.Role>().ToArray());
+                () => response.GetContentMultipart<EastFive.Api.Azure.Resources.Role>().ToArray());
         }
 
         public static async Task<HttpResponseMessage> RolesDeleteByIdAsync(this ITestSession session,
             WebId roleId)
         {
-            var query = new Resources.RoleQuery
+            var query = new EastFive.Api.Azure.Resources.Queries.RoleQuery
             {
                 Id = roleId,
             };
-            var response = await session.DeleteAsync<Controllers.RoleController>(query);
+            var response = await session.DeleteAsync<EastFive.Api.Azure.Controllers.RoleController>(query);
             return response;
         }
     }

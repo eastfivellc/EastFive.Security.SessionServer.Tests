@@ -11,6 +11,8 @@ using BlackBarLabs.Extensions;
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
 using System.Linq;
+using EastFive.Api.Azure.Credentials;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -89,8 +91,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         var userIdProvider = Guid.NewGuid().ToString("N");
                                         var token = ProvideLoginMock.GetToken(userIdProvider);
                                         Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
-                                        var responseWithoutAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
-                                            new Controllers.ResponseResult
+                                        var responseWithoutAccountLink = await testSession.GetAsync<ResponseController>(
+                                            new ResponseResult
                                             {
                                                 method = val,
                                             },
@@ -106,8 +108,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         AssertApi.Created(await superAdminSession.CredentialPostAsync(val, userIdProvider, authentication,
                                             (response, resource) => response));
 
-                                        var responsePostAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
-                                            new Controllers.ResponseResult
+                                        var responsePostAccountLink = await testSession.GetAsync<ResponseController>(
+                                            new ResponseResult
                                             {
                                                 method = val,
                                             },
@@ -151,8 +153,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                 var userIdProvider = Guid.NewGuid().ToString("N");
                                 var token = ProvideLoginMock.GetToken(userIdProvider);
                                 Enum.TryParse(authRequestLink.Method, out CredentialValidationMethodTypes val);
-                                var responseWithoutAccountLink = await testSession.GetAsync<Controllers.ResponseController>(
-                                    new Controllers.ResponseResult
+                                var responseWithoutAccountLink = await testSession.GetAsync<ResponseController>(
+                                    new ResponseResult
                                     {
                                         method = val
                                     },

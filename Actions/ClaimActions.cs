@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using BlackBarLabs.Api.Tests;
 using System.Net.Http;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -23,7 +24,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 Value = value,
                 Signature = "",
             };
-            return await testSession.PostAsync<Api.Controllers.AccountLinksController>(claim);
+            return await testSession.PostAsync<AccountLinksController>(claim);
         }
     }
 }

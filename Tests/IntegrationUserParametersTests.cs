@@ -11,6 +11,7 @@ using EastFive.Security.SessionServer.Tests;
 using BlackBarLabs.Api.Tests;
 using EastFive.Security.SessionServer.Api.Tests;
 using System.Collections.Generic;
+using EastFive.Api.Azure.Credentials.Resources;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -60,8 +61,8 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                             Assert.AreEqual(authRequestLink.Method, value.Method);
                                             Assert.AreEqual(redirectAddressDesired, value.LocationAuthenticationReturn);
 
-                                            var userParams = new Dictionary<string, Resources.AuthorizationRequest.CustomParameter>();
-                                            userParams.Add("push_pmp_file_to_ehr", new Resources.AuthorizationRequest.CustomParameter { Value = "true" });
+                                            var userParams = new Dictionary<string, AuthorizationRequest.CustomParameter>();
+                                            userParams.Add("push_pmp_file_to_ehr", new AuthorizationRequest.CustomParameter { Value = "true" });
                                             Assert.IsTrue(await userSession.IntegrationPutAsync(authRequestLink.Id,
                                                authRequestLink.Method, authorizationId,
                                                redirectAddressDesired,

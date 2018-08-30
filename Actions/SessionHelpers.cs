@@ -9,14 +9,14 @@ namespace EastFive.Security.SessionServer.Api.Tests
 {
     public static class SessionHelpers
     {
-        public static async Task<Resources.Session> CreateSessionAsync(this ITestSession testSession)
+        public static async Task<EastFive.Api.Azure.Credentials.Resources.Session> CreateSessionAsync(this ITestSession testSession)
         {
             var id = Guid.NewGuid();
-            var session = new Resources.Session()
+            var session = new EastFive.Api.Azure.Credentials.Resources.Session()
             {
                 Id = id,
             };
-            var response = await testSession.PostAsync<Controllers.SessionController>(session);
+            var response = await testSession.PostAsync<EastFive.Api.Azure.Credentials.Controllers.SessionController>(session);
             response.Assert(HttpStatusCode.Created);
             return session;
         }
@@ -42,12 +42,12 @@ namespace EastFive.Security.SessionServer.Api.Tests
         public static async Task<HttpResponseMessage> AuthenticateSession(this ITestSession testSession,
             Guid sessionId, Guid authorizationId)
         {
-            var session = new Resources.Session()
+            var session = new EastFive.Api.Azure.Credentials.Resources.Session()
             {
                 Id = sessionId,
                 AuthorizationId = authorizationId,
             };
-            var authenticateSessionResponse = await testSession.PutAsync<Controllers.SessionController>(session);
+            var authenticateSessionResponse = await testSession.PutAsync<EastFive.Api.Azure.Credentials.Controllers.SessionController>(session);
             return authenticateSessionResponse;
         }
     }

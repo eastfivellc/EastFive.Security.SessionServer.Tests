@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using BlackBarLabs.Api.Tests;
 using System.Net.Http;
+using EastFive.Api.Azure.Credentials.Resources;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -13,10 +14,10 @@ namespace EastFive.Security.SessionServer.Api.Tests
     {
         public static async Task<TResult> CredentialPostAsync<TResult>(this ITestSession session,
             EastFive.Api.Azure.Credentials.CredentialValidationMethodTypes method, string subject, Guid authentication,
-            Func<HttpResponseMessage, EastFive.Api.Azure.Credentials.Api.Resources.Credential, TResult> callback)
+            Func<HttpResponseMessage, Credential, TResult> callback)
         {
             //Create the order via post
-            var resource = new EastFive.Api.Azure.Credentials.Resources.Credential()
+            var resource = new Credential()
             {
                 Id = Guid.NewGuid(),
                 Authentication = authentication,
