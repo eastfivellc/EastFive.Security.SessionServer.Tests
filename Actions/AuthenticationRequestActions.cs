@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using BlackBarLabs.Api.Tests;
 using System.Net.Http;
 using BlackBarLabs.Api.Resources;
+using EastFive.Api.Azure.Credentials;
+using EastFive.Api.Azure.Credentials.Controllers;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -16,10 +18,10 @@ namespace EastFive.Security.SessionServer.Api.Tests
             WebId requestId,
             string method, AuthenticationActions action, 
             Uri redirectAddressDesired, Uri redirectAddressDesiredPostLogout,
-            Func<HttpResponseMessage, Resources.Session, Func<Resources.Session>, TResult> callback)
+            Func<HttpResponseMessage, EastFive.Api.Azure.Credentials.Resources.Session, Func<EastFive.Api.Azure.Credentials.Resources.Session>, TResult> callback)
         {
             //Create the order via post
-            var resource = new Resources.Session()
+            var resource = new EastFive.Api.Azure.Credentials.Resources.Session()
             {
                 Id = requestId,
                 Method = Enum.GetName(typeof(CredentialValidationMethodTypes), method),
@@ -27,18 +29,18 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 LocationLogoutReturn = redirectAddressDesiredPostLogout,
             };
 
-            var response = await session.PostAsync<Controllers.SessionController>(resource);
+            var response = await session.PostAsync<SessionController>(resource);
             return callback(response, resource,
-                () => response.GetContent<Resources.Session>());
+                () => response.GetContent<EastFive.Api.Azure.Credentials.Resources.Session>());
         }
 
         public static async Task<TResult> IntegrationPostAsync<TResult>(this ITestSession session,
             WebId requestId,
             string method, Guid authorizationId, Uri redirect,
-            Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
+            Func<HttpResponseMessage, EastFive.Api.Azure.Credentials.Resources.Integration, Func<EastFive.Api.Azure.Credentials.Resources.Integration>, TResult> callback)
         {
             //Create the order via post
-            var resource = new Resources.Integration()
+            var resource = new EastFive.Api.Azure.Credentials.Resources.Integration()
             {
                 Id = requestId,
                 Method = Enum.GetName(typeof(CredentialValidationMethodTypes), method),
@@ -46,18 +48,18 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 LocationAuthenticationReturn = redirect,
             };
 
-            var response = await session.PostAsync<Controllers.IntegrationController>(resource);
+            var response = await session.PostAsync<EastFive.Api.Azure.Credentials.Controllers.IntegrationController>(resource);
             return callback(response, resource,
-                () => response.GetContent<Resources.Integration>());
+                () => response.GetContent<EastFive.Api.Azure.Credentials.Resources.Integration>());
         }
 
         public static async Task<TResult> IntegrationPutAsync<TResult>(this ITestSession session,
            WebId requestId,
            string method, Guid authorizationId, Uri redirect,
-           IDictionary<string, Resources.AuthorizationRequest.CustomParameter> userParams,
-           Func<HttpResponseMessage, Resources.Integration, Func<Resources.Integration>, TResult> callback)
+           IDictionary<string, EastFive.Api.Azure.Credentials.Resources.AuthorizationRequest.CustomParameter> userParams,
+           Func<HttpResponseMessage, EastFive.Api.Azure.Credentials.Resources.Integration, Func<EastFive.Api.Azure.Credentials.Resources.Integration>, TResult> callback)
         {
-            var resource = new Resources.Integration()
+            var resource = new EastFive.Api.Azure.Credentials.Resources.Integration()
             {
                 Id = requestId,
                 Method = method,
@@ -66,58 +68,58 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 UserParameters = userParams
             };
 
-            var response = await session.PutAsync<Controllers.IntegrationController>(resource);
+            var response = await session.PutAsync<EastFive.Api.Azure.Credentials.Controllers.IntegrationController>(resource);
             return callback(response, resource,
-                () => response.GetContent<Resources.Integration>());
+                () => response.GetContent<EastFive.Api.Azure.Credentials.Resources.Integration>());
         }
 
         public static async Task<TResult> AuthenticationRequestGetAsync<TResult>(this ITestSession session,
             WebId authenticationRequestId,
-            Func<HttpResponseMessage, Func<Resources.Session>, TResult> callback)
+            Func<HttpResponseMessage, Func<EastFive.Api.Azure.Credentials.Resources.Session>, TResult> callback)
         {
-            var query = new Resources.Queries.SessionQuery
+            var query = new EastFive.Api.Azure.Credentials.Resources.Queries.SessionQuery
             {
                 Id = authenticationRequestId,
             };
-            var response = await session.GetAsync<Controllers.SessionController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Credentials.Controllers.SessionController>(query);
             return callback(response,
-                () => response.GetContent<Resources.Session>());
+                () => response.GetContent<EastFive.Api.Azure.Credentials.Resources.Session>());
         }
         
         public static async Task<TResult> IntegrationGetAsync<TResult>(this ITestSession session,
             WebId integrationId,
-            Func<HttpResponseMessage, Func<Resources.Integration>, TResult> callback)
+            Func<HttpResponseMessage, Func<EastFive.Api.Azure.Credentials.Resources.Integration>, TResult> callback)
         {
-            var query = new Resources.Queries.IntegrationQuery
+            var query = new EastFive.Api.Azure.Credentials.Resources.Queries.IntegrationQuery
             {
                 Id = integrationId,
             };
-            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Credentials.Controllers.IntegrationController>(query);
             return callback(response,
-                () => response.GetContent<Resources.Integration>());
+                () => response.GetContent<EastFive.Api.Azure.Credentials.Resources.Integration>());
         }
 
         public static async Task<TResult> IntegrationGetByAuthorizationAsync<TResult>(this ITestSession session,
             WebId actorId,
-            Func<HttpResponseMessage, Func<Resources.Integration[]>, TResult> callback)
+            Func<HttpResponseMessage, Func<EastFive.Api.Azure.Credentials.Resources.Integration[]>, TResult> callback)
         {
-            var query = new Resources.Queries.IntegrationQuery
+            var query = new EastFive.Api.Azure.Credentials.Resources.Queries.IntegrationQuery
             {
                 ActorId = actorId,
             };
-            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Credentials.Controllers.IntegrationController>(query);
             return callback(response,
-                () => response.GetContentMultipart<Resources.Integration>().ToArray());
+                () => response.GetContentMultipart<EastFive.Api.Azure.Credentials.Resources.Integration>().ToArray());
         }
 
         public static async Task<HttpResponseMessage> IntegrationDeleteAsync(this ITestSession session,
             WebId integrationId)
         {
-            var query = new Resources.Queries.IntegrationQuery
+            var query = new EastFive.Api.Azure.Credentials.Resources.Queries.IntegrationQuery
             {
                 Id = integrationId,
             };
-            var response = await session.GetAsync<Controllers.IntegrationController>(query);
+            var response = await session.GetAsync<EastFive.Api.Azure.Credentials.Controllers.IntegrationController>(query);
             return response;
         }
     }

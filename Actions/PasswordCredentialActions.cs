@@ -12,11 +12,11 @@ namespace EastFive.Security.SessionServer.Api.Tests
     public static class CredentialActions
     {
         public static async Task<TResult> CredentialPostAsync<TResult>(this ITestSession session,
-            CredentialValidationMethodTypes method, string subject, Guid authentication,
-            Func<HttpResponseMessage, Resources.Credential, TResult> callback)
+            EastFive.Api.Azure.Credentials.CredentialValidationMethodTypes method, string subject, Guid authentication,
+            Func<HttpResponseMessage, EastFive.Api.Azure.Credentials.Api.Resources.Credential, TResult> callback)
         {
             //Create the order via post
-            var resource = new Resources.Credential()
+            var resource = new EastFive.Api.Azure.Credentials.Resources.Credential()
             {
                 Id = Guid.NewGuid(),
                 Authentication = authentication,
@@ -24,7 +24,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 Subject = subject,
             };
 
-            var response = await session.PostAsync<Controllers.CredentialController>(resource);
+            var response = await session.PostAsync<EastFive.Api.Azure.Credentials.Controllers.CredentialController>(resource);
             return callback(response, resource);
         }
     }
