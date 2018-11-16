@@ -6,8 +6,8 @@
     <ProjectGuid>{43C064CE-EB8C-4A33-BCBE-5F2BDCDC0C2A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EastFive.Security.SessionServer.Tests</RootNamespace>
-    <AssemblyName>EastFive.Security.SessionServer.Tests</AssemblyName>
+    <RootNamespace>EastFive.Azure.Tests</RootNamespace>
+    <AssemblyName>EastFive.Azure.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -173,9 +173,9 @@
       <Project>{17a2e027-c32a-41db-9b46-5222d55c0e26}</Project>
       <Name>BlackBarLabs.Security</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BlackBarLabs.Web\BlackBarLabs.Web.csproj">
+    <ProjectReference Include="..\BlackBarLabs.Web\EastFive.Web.csproj">
       <Project>{5bb52391-2704-44c0-bc8a-dbbe31498814}</Project>
-      <Name>BlackBarLabs.Web</Name>
+      <Name>EastFive.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\EastFive.SessionServer\EastFive.Azure.csproj">
       <Project>{E2F3FCFB-89C8-47B3-B3D2-AE35E52A84FA}</Project>
