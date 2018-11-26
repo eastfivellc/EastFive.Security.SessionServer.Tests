@@ -41,7 +41,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                 async (responseGetActAsUserRedirect) =>
                                 {
                                     var redirect = AssertApi.Redirect(responseGetActAsUserRedirect).Headers.Location;
-                                    var sessionId = Guid.Parse(redirect.GetQueryParam("request_id"));
+                                    var sessionId = Guid.Parse(redirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier));
                                     // Fetching without a tokened session succeeds... (per UI dev's whining ;-))
                                     return await testSession.AuthenticationRequestGetAsync(sessionId,
                                         (responseAuthRequestPopulatedGet, fetchPopulated) =>

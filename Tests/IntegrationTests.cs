@@ -75,7 +75,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         
                                         Assert.AreEqual(
                                             postedResource.Id.UUID.ToString("N"),
-                                            responseAuthenicateIntegration.Headers.Location.GetQueryParam("request_id"));
+                                            responseAuthenicateIntegration.Headers.Location.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier));
 
                                         AssertApi.Success(await userSession.IntegrationGetAsync(postedResource,
                                             (responseAuthRequestPopulatedGet, fetchPopulated) =>

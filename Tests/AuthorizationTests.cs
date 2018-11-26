@@ -122,7 +122,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         AssertApi.Redirect(responsePostAccountLink);
                                         Assert.AreEqual(
                                             postedResource.Id.UUID.ToString("N"),
-                                            responsePostAccountLink.Headers.Location.GetQueryParam("request_id"));
+                                            responsePostAccountLink.Headers.Location.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier));
 
                                         return await testSession.AuthenticationRequestGetAsync(postedResource,
                                             (responseAuthRequestPopulatedGet, fetchPopulated) =>
