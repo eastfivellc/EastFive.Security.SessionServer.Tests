@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using BlackBarLabs.Security.Crypto;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BlackBarLabs.Api.Tests;
 using EastFive.Security.SessionServer.Tests;

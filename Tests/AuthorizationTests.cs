@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using BlackBarLabs.Security.Crypto;
 using BlackBarLabs.Api.Tests;
-using BlackBarLabs.Extensions;
 
 using EastFive.Api.Tests;
 using EastFive.Security.SessionServer.Tests;
 using System.Linq;
 using EastFive.Api.Azure.Credentials;
 using EastFive.Api.Azure.Credentials.Controllers;
+using EastFive.Security.Crypto;
+using EastFive.Extensions;
 
 namespace EastFive.Security.SessionServer.Api.Tests
 {
@@ -193,7 +193,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 //    Token = credential.Token,
                 //});
                 //duplicateCredentailResponse.Assert(System.Net.HttpStatusCode.Conflict);
-                await true.ToTask();
+                await true.AsTask();
             });
         }
 
@@ -214,7 +214,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                 //};
                 //await testSession.PostAsync<SessionController>(session)
                 //    .AssertAsync(System.Net.HttpStatusCode.Created);
-                await true.ToTask();
+                await true.AsTask();
             });
         }
     }
