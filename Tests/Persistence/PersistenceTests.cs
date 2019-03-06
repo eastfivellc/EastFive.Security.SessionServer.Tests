@@ -22,6 +22,7 @@ using EastFive.Linq;
 using EastFive.Linq.Async;
 using Newtonsoft.Json;
 using EastFive.Persistence;
+using EastFive.Persistence.Azure.StorageTables;
 
 namespace EastFive.Azure.Tests.Persistence
 {
@@ -33,7 +34,7 @@ namespace EastFive.Azure.Tests.Persistence
         public Guid id => resourceRef.id;
 
         public const string ResourceIdPropertyName = "id";
-        [StorageProperty(IsRowKey = true, Name = ResourceIdPropertyName)]
+        [RowKey]
         public IRef<ComplexStorageModel> resourceRef;
 
         [DataContract]
@@ -41,68 +42,68 @@ namespace EastFive.Azure.Tests.Persistence
         {
             #region Singles
 
-            [StorageProperty]
+            [Storage]
             public Guid guid;
 
-            [StorageProperty]
+            [Storage]
             public string stringProperty;
 
-            [StorageProperty]
+            [Storage]
             public object objectInt;
 
-            [StorageProperty]
+            [Storage]
             public object objectString;
 
-            [StorageProperty]
+            [Storage]
             public IRef<RelatedModel> relatedRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObj<object> refObjObj;
 
-            [StorageProperty]
+            [Storage]
             public IRefObj<RelatedModelObj> refObj;
 
-            [StorageProperty]
+            [Storage]
             public IRefOptional<RelatedModel> relatedOptionalRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObjOptional<RelatedModelObj> relatedOptionalObjRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObjOptional<object> relatedOptionalObjObjRef;
 
             #endregion
 
             #region Arrays
 
-            [StorageProperty]
+            [Storage]
             public Guid[] arrayGuid;
 
-            [StorageProperty]
+            [Storage]
             public string[] arrayString;
 
-            [StorageProperty]
+            [Storage]
             public object[] arrayObjectInt;
 
-            [StorageProperty]
+            [Storage]
             public object[] arrayObjectString;
 
-            [StorageProperty]
+            [Storage]
             public IRef<RelatedModel>[] arrayRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObj<object>[] arrayRefObjObj;
 
-            [StorageProperty]
+            [Storage]
             public IRefObj<RelatedModelObj>[] arrayRefObj;
 
-            [StorageProperty]
+            [Storage]
             public IRefOptional<RelatedModel>[] arrayRelatedOptionalRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObjOptional<RelatedModelObj>[] arrayRelatedOptionalObjRef;
 
-            [StorageProperty]
+            [Storage]
             public IRefObjOptional<object>[] arrayRelatedOptionalObjObjRef;
 
             #endregion
@@ -118,113 +119,113 @@ namespace EastFive.Azure.Tests.Persistence
         #region Singles
 
         public const string GuidPropertyName = "guid";
-        [StorageProperty(Name = GuidPropertyName)]
+        [Storage(Name = GuidPropertyName)]
         public Guid guid;
 
         public const string StringPropertyName = "string";
-        [StorageProperty(Name = StringPropertyName)]
+        [Storage(Name = StringPropertyName)]
         public string stringProperty;
 
-        [StorageProperty]
+        [Storage]
         public object objectInt;
 
-        [StorageProperty]
+        [Storage]
         public object objectString;
 
         public const string RealtedPropertyName = "related";
-        [StorageProperty(Name = RealtedPropertyName)]
+        [Storage(Name = RealtedPropertyName)]
         public IRef<RelatedModel> relatedRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObj<object> refObjObj;
 
-        [StorageProperty]
+        [Storage]
         public IRefObj<RelatedModelObj> refObj;
 
-        [StorageProperty]
+        [Storage]
         public IRefOptional<RelatedModel> relatedOptionalRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObjOptional<RelatedModelObj> relatedOptionalObjRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObjOptional<object> relatedOptionalObjObjRef;
 
-        [StorageProperty]
+        [Storage]
         public EmbeddedModel embeddedModel;
 
         #endregion
 
         #region Arrays
 
-        [StorageProperty]
+        [Storage]
         public Guid[] arrayGuid;
 
-        [StorageProperty]
+        [Storage]
         public string[] arrayString;
 
-        [StorageProperty]
+        [Storage]
         public object[] arrayObjectInt;
 
-        [StorageProperty]
+        [Storage]
         public object[] arrayObjectString;
 
-        [StorageProperty]
+        [Storage]
         public ExampleEnum[] arrayEnum;
 
-        [StorageProperty]
+        [Storage]
         public IRef<RelatedModel>[] arrayRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObj<object>[] arrayRefObjObj;
 
-        [StorageProperty]
+        [Storage]
         public IRefObj<RelatedModelObj>[] arrayRefObj;
 
-        [StorageProperty]
+        [Storage]
         public IRefOptional<RelatedModel>[] arrayRelatedOptionalRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObjOptional<RelatedModelObj>[] arrayRelatedOptionalObjRef;
 
-        [StorageProperty]
+        [Storage]
         public IRefObjOptional<object>[] arrayRelatedOptionalObjObjRef;
 
-        [StorageProperty]
+        [Storage]
         public EmbeddedModel[] arrayEmbeddedModel;
 
         #endregion
 
         #region Dictionary
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<Guid, Guid[]> dictGuid;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<object, object[]> dictObject;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<string, string[]> dictObjectIntArrayEmbedArray;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRef<RelatedModel>, IRef<RelatedModel>[]> dictRef;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRefObj<RelatedModelObj>, IRefObj<RelatedModelObj>[]> dictRefObj;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRefObj<object>, IRefObj<object>[]> dictRefObjectObj;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRefOptional<RelatedModel>, IRefOptional<RelatedModel>[]> dictRefOptional;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRefObjOptional<RelatedModelObj>, IRefObjOptional<RelatedModelObj>[]> dictRefOptionalObj;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<IRefObjOptional<object>, IRefObjOptional<object>[]> dictRefOptionalObjObj;
 
-        [StorageProperty]
+        [Storage]
         public IDictionary<EmbeddedModel, EmbeddedModel[]> dictEmbeddedModel;
 
         #endregion
