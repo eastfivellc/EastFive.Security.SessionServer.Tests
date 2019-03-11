@@ -22,8 +22,6 @@ namespace EastFive.Azure.Tests
                 });
         }
 
-        private static ITestApplication genesisSession = default(TestApplication);
-
         public static async Task<ITestApplication> SessionSuperAdminAsync(this ITestApplicationFactory testAppFactory)
         {
             return await EastFive.Web.Configuration.Settings.GetGuid(EastFive.Api.AppSettings.AuthorizationIdSuperAdmin,
