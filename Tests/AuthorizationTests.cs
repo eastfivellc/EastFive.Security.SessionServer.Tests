@@ -13,8 +13,11 @@ using EastFive.Api.Azure.Credentials;
 using EastFive.Api.Azure.Credentials.Controllers;
 using EastFive.Security.Crypto;
 using EastFive.Extensions;
+using EastFive.Security.SessionServer.Api.Tests;
+using EastFive.Azure.Auth;
+using EastFive.Api;
 
-namespace EastFive.Security.SessionServer.Api.Tests
+namespace EastFive.Azure.Tests.Authorization
 {
     [TestClass]
     public class AuthorizationTests
@@ -59,7 +62,7 @@ namespace EastFive.Security.SessionServer.Api.Tests
                         var redirectAddressDesired = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/App");
                         var redirectAddressDesiredPostLogout = new Uri($"http://testing{Guid.NewGuid().ToString("N")}.example.com/Login");
                         var userSession = await await testSession.SessionPostAsync(authRequestLink.Id,
-                                Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), AuthenticationActions.signin, 
+                                Enum.GetName(typeof(CredentialValidationMethodTypes), authRequestLink.CredentialValidationMethodType), Security.SessionServer.AuthenticationActions.signin, 
                                 redirectAddressDesired, redirectAddressDesiredPostLogout,
                             async (responsePosted, postedResource, fetchBody) =>
                             {
@@ -173,6 +176,99 @@ namespace EastFive.Security.SessionServer.Api.Tests
                     }));
                 return true;
             }));
+        }
+
+
+        [TestMethod]
+        public async Task AuthenticationRequestActsAppropriately2()
+        {
+
+            // var sessionFactory = new RestApplicationFactory();
+            var sessionFactory = await TestApplicationFactory.InitAsync();
+            var superAdmin = await sessionFactory.SessionSuperAdminAsync();
+
+            var externalSystemUserId = Guid.NewGuid().ToString();
+            var internalSystemUserId = Guid.NewGuid();
+            var mockParameters = ProvideLoginMock.GetParameters(externalSystemUserId);
+            var mockAuthenticationSuperAdmin = await superAdmin.GetAsync<Authentication, Authentication>(
+                onContents:
+                    authentications =>
+                    {
+                        var matchingAuthentications = authentications
+                            .Where(auth => auth.name == ProvideLoginMock.IntegrationName);
+                        Assert.IsTrue(matchingAuthentications.Any());
+                        return matchingAuthentications.First();
+                    });
+            Assert.IsTrue(await superAdmin.PostAsync(
+                new Auth.AccountMapping
+                {
+                    account = internalSystemUserId,
+                    Method = mockAuthenticationSuperAdmin.authenticationId,
+                    parameters = mockParameters,
+                },
+                onCreated: () => true));
+
+            var comms = sessionFactory.GetUnauthorizedSession();
+            var session = new Session
+            {
+                sessionId = Guid.NewGuid().AsRef<Session>(),
+            };
+            Assert.IsTrue(await comms.PostAsync(session,
+                onCreated: () => true));
+
+            // TODO: comms.LoadToken(session.token);
+            var authentication = await comms.GetAsync<Authentication, Authentication>(
+                onContents:
+                    authentications =>
+                    {
+                        var matchingAuthentications = authentications
+                            .Where(auth => auth.name == ProvideLoginMock.IntegrationName);
+                        Assert.IsTrue(matchingAuthentications.Any());
+                        return matchingAuthentications.First();
+                    });
+
+            var authReturnUrl = new Uri("http://example.com/authtest");
+            var authorization = new Auth.Authorization
+            {
+                authorizationId = Guid.NewGuid().AsRef<Auth.Authorization>(),
+                Method = authentication.authenticationId,
+                LocationAuthenticationReturn = authReturnUrl,
+            };
+            var authroizationWithUrls = await comms.PostAsync(authorization,
+                onCreatedBody:
+                    (authorizationResponse, contentType) =>
+                    {
+                        Assert.AreEqual(authorization.Method.id, authorizationResponse.Method.id);
+                        Assert.AreEqual(authReturnUrl, authorizationResponse.LocationAuthenticationReturn);
+                        return authorizationResponse;
+                    });
+
+            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId);
+            var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
+                onRedirect:
+                    async (urlRedirect, reason) =>
+                    {
+                        var authIdStr = urlRedirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier);
+                        var authId = Guid.Parse(authIdStr);
+                        var authIdRef = authId.AsRef<Auth.Authorization>();
+
+                        // TODO: New comms here?
+                        return await await comms.GetAsync(
+                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
+                            onContent:
+                                (authenticatedAuthorization) =>
+                                {
+                                    return comms.PatchAsync(session,
+                                        onUpdatedBody:
+                                            (updated) =>
+                                            {
+                                                return updated;
+                                            });
+                                });
+                    });
+
+            Assert.AreEqual(internalSystemUserId, authorizationToAthenticateSession.account.Value);
+
         }
 
         [TestMethod]

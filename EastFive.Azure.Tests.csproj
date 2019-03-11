@@ -137,6 +137,8 @@
     <Compile Include="Actions\AuthenticationRequestActions.cs" />
     <Compile Include="Actions\SessionHelpers.cs" />
     <Compile Include="Mocks\TestCredential.cs" />
+    <Compile Include="Resources\AdminWorkflows.cs" />
+    <Compile Include="Resources\TestApplicationFactory.cs" />
     <Compile Include="Tests\ActAsUserTests.cs" />
     <Compile Include="Tests\IntegrationTests.cs" />
     <Compile Include="Tests\IntegrationUserParametersTests.cs" />
