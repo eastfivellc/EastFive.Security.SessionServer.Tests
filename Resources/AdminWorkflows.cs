@@ -28,12 +28,14 @@ namespace EastFive.Azure.Tests
                 async (superAdminAuthorizationId) =>
                 {
                     var sessionToRun = testAppFactory.GetUnauthorizedSession();
+                    var sessionRef = Guid.NewGuid().AsRef<EastFive.Azure.Auth.Session>();
+                    var session = new EastFive.Azure.Auth.Session
+                    {
+                        sessionId = sessionRef,
+                        authorization = superAdminAuthorizationId.AsRefOptional<EastFive.Azure.Auth.Authorization>(),
+                    };
                     var token = await sessionToRun.PostAsync(
-                        new EastFive.Azure.Auth.Session
-                        {
-                            sessionId = Guid.NewGuid().AsRef<EastFive.Azure.Auth.Session>(),
-                            authorization = superAdminAuthorizationId.AsRefOptional<EastFive.Azure.Auth.Authorization>(),
-                        },
+                        session,
                         onCreatedBody:
                         (sessionCreated, contentType) =>
                         {

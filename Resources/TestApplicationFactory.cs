@@ -23,6 +23,9 @@ namespace EastFive.Azure.Tests
 
         public static async Task<TestApplicationFactory> InitAsync()
         {
+            var timeService = new EastFive.Web.Services.TimeService();
+            Func<ISendMessageService> messageService = () => default(ISendMessageService);
+
             var httpConfig = new HttpConfiguration();
             ProvideLoginMock.method = CredentialValidationMethodTypes.Password;
             var identityServices = new Func<
@@ -33,6 +36,9 @@ namespace EastFive.Azure.Tests
                     {
                         ProvideLoginMock.InitializeAsync,
                     };
+            EastFive.Api.Services.ServiceConfiguration.Initialize(httpConfig,
+                messageService,
+                () => timeService);
             return await (new TestApplicationFactory()).AsTask();
         }
 
