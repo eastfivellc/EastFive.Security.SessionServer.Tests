@@ -16,6 +16,7 @@ using EastFive.Extensions;
 using EastFive.Security.SessionServer.Api.Tests;
 using EastFive.Azure.Auth;
 using EastFive.Api;
+using BlackBarLabs.Extensions;
 
 namespace EastFive.Azure.Tests.Authorization
 {
@@ -202,7 +203,7 @@ namespace EastFive.Azure.Tests.Authorization
                         return new ProvideLoginMock();
                     });
 
-            var authenticationAdmin = await superAdmin.GetAsync<Authentication, Authentication>(
+            var authenticationAdmin = await superAdmin.GetAsync<Method, Method>(
                 onContents:
                     authentications =>
                     {
@@ -212,7 +213,7 @@ namespace EastFive.Azure.Tests.Authorization
                         return matchingAuthentications.First();
                     });
 
-            var mockAuthenticationMock = await superAdmin.GetAsync<Authentication, Authentication>(
+            var mockAuthenticationMock = await superAdmin.GetAsync<Method, Method>(
                 onContents:
                     authentications =>
                     {
@@ -242,7 +243,7 @@ namespace EastFive.Azure.Tests.Authorization
 
             var externalSystemUserId = Guid.NewGuid().ToString();
             var internalSystemUserId = Guid.NewGuid();
-            var mockParameters = ProvideLoginMock.GetParameters(externalSystemUserId);
+            // var mockParameters = ProvideLoginMock.GetParameters(externalSystemUserId);
             Assert.IsTrue(await superAdmin.PostAsync(
                 new Auth.AccountMapping
                 {
@@ -269,7 +270,7 @@ namespace EastFive.Azure.Tests.Authorization
                     });
 
             // TODO: comms.LoadToken(session.token);
-            var authentication = await comms.GetAsync<Authentication, Authentication>(
+            var authentication = await comms.GetAsync<Method, Method>(
                 onContents:
                     authentications =>
                     {
@@ -279,20 +280,6 @@ namespace EastFive.Azure.Tests.Authorization
                         return matchingAuthentications.First();
                     });
 
-            //var authorization = new Auth.Authorization
-            //{
-            //    authorizationId = Guid.NewGuid().AsRef<Auth.Authorization>(),
-            //    Method = authentication.authenticationId,
-            //    LocationAuthenticationReturn = authReturnUrl,
-            //};
-            //var authroizationWithUrls = await comms.PostAsync(authorization,
-            //    onCreatedBody:
-            //        (authorizationResponse, contentType) =>
-            //        {
-            //            Assert.AreEqual(authorization.Method.id, authorizationResponse.Method.id);
-            //            Assert.AreEqual(authReturnUrl, authorizationResponse.LocationAuthenticationReturn);
-            //            return authorizationResponse;
-            //        });
 
             var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationInvite.authorizationId.id);
             var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
@@ -307,10 +294,33 @@ namespace EastFive.Azure.Tests.Authorization
                         return await await comms.GetAsync(
                             (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
                             onContent:
-                                (authenticatedAuthorization) =>
+                                async (authenticatedAuthorization) =>
                                 {
+                                    var sessionVirgin = new Session
+                                    {
+                                        sessionId = Guid.NewGuid().AsRef<Session>(),
+                                        authorization = new RefOptional<Auth.Authorization>(authIdRef),
+                                    };
+                                    var tokenNew = await comms.PostAsync(sessionVirgin,
+                                        onCreatedBody: (sessionWithToken, contentType) =>
+                                        {
+                                            Assert.AreEqual(internalSystemUserId, sessionWithToken.account.Value);
+                                            return sessionWithToken.HeaderName.PairWithValue(sessionWithToken.token);
+                                        });
+                                    comms.Headers.Add(tokenNew.Key, tokenNew.Value);
+
+                                    var integration = new Auth.Integration
+                                    {
+                                        integrationId = Guid.NewGuid(),
+                                        accountId = internalSystemUserId,
+                                        Method = mockAuthenticationMock.authenticationId,
+                                        authorization = new RefOptional<Auth.Authorization>(authIdRef),
+                                    };
+                                    Assert.IsTrue(await comms.PostAsync(integration,
+                                        onCreated: () => true));
+
                                     session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId);
-                                    return comms.PatchAsync(session,
+                                    return await comms.PatchAsync(session,
                                         onUpdatedBody:
                                             (updated) =>
                                             {
@@ -346,11 +356,18 @@ namespace EastFive.Azure.Tests.Authorization
                     async (app) =>
                     {
                         await 1.AsTask();
-                        return new ProvideLoginMock();
+                        var accountMock = new ProvideLoginAccountMock();
+                        accountMock.MapAccount =
+                            (externalKey) =>
+                            {
+                                Assert.AreEqual(externalSystemUserId, externalKey);
+                                return internalSystemUserId;
+                            };
+                        return accountMock;
                     });
 
             // TODO: comms.LoadToken(session.token);
-            var authentication = await comms.GetAsync<Authentication, Authentication>(
+            var authentication = await comms.GetAsync<Method, Method>(
                 onContents:
                     authentications =>
                     {
