@@ -309,6 +309,73 @@ namespace EastFive.Azure.Tests.Authorization
                             onContent:
                                 (authenticatedAuthorization) =>
                                 {
+                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId);
+                                    return comms.PatchAsync(session,
+                                        onUpdatedBody:
+                                            (updated) =>
+                                            {
+                                                return updated;
+                                            });
+                                });
+                    });
+
+            Assert.AreEqual(internalSystemUserId, authorizationToAthenticateSession.account.Value);
+
+        }
+
+
+        [TestMethod]
+        public async Task AuthenticationHandlesDirectLink()
+        {
+            // var sessionFactory = new RestApplicationFactory();
+            var sessionFactory = await TestApplicationFactory.InitAsync();
+
+            var externalSystemUserId = Guid.NewGuid().ToString();
+            var internalSystemUserId = Guid.NewGuid();
+            
+            var comms = sessionFactory.GetUnauthorizedSession();
+            var session = new Session
+            {
+                sessionId = Guid.NewGuid().AsRef<Session>(),
+            };
+            var token = await comms.PostAsync(session,
+                onCreatedBody: (sessionWithToken, contentType) => sessionWithToken.token);
+
+            (comms as Api.Azure.AzureApplication)
+                .AddOrUpdateInstantiation(typeof(ProvideLoginMock),
+                    async (app) =>
+                    {
+                        await 1.AsTask();
+                        return new ProvideLoginMock();
+                    });
+
+            // TODO: comms.LoadToken(session.token);
+            var authentication = await comms.GetAsync<Authentication, Authentication>(
+                onContents:
+                    authentications =>
+                    {
+                        var matchingAuthentications = authentications
+                            .Where(auth => auth.name == ProvideLoginMock.IntegrationName);
+                        Assert.IsTrue(matchingAuthentications.Any());
+                        return matchingAuthentications.First();
+                    });
+
+            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId);
+            var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
+                onRedirect:
+                    async (urlRedirect, reason) =>
+                    {
+                        var authIdStr = urlRedirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier);
+                        var authId = Guid.Parse(authIdStr);
+                        var authIdRef = authId.AsRef<Auth.Authorization>();
+
+                        // TODO: New comms here?
+                        return await await comms.GetAsync(
+                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
+                            onContent:
+                                (authenticatedAuthorization) =>
+                                {
+                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId);
                                     return comms.PatchAsync(session,
                                         onUpdatedBody:
                                             (updated) =>
