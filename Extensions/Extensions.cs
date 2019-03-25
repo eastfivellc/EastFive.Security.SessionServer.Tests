@@ -54,7 +54,7 @@ namespace EastFive.Azure.Tests.Extensions
                                             (updated, contentType) =>
                                             {
                                                 var commsAuth = sessionFactory.GetAuthorizedSession(updated.token);
-                                                return onComplete(comms, updated, authenticatedAuthorization, urlRedirect);
+                                                return onComplete(commsAuth, updated, authenticatedAuthorization, urlRedirect);
                                             });
                                 });
                     });
