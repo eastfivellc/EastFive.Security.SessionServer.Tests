@@ -344,13 +344,7 @@ namespace EastFive.Azure.Tests.Authorization
             var internalSystemUserId = Guid.NewGuid();
             
             var comms = sessionFactory.GetUnauthorizedSession();
-            var session = new Session
-            {
-                sessionId = Guid.NewGuid().AsRef<Session>(),
-            };
-            var token = await comms.PostAsync(session,
-                onCreatedBody: (sessionWithToken, contentType) => sessionWithToken.token);
-
+            
             (comms as Api.Azure.AzureApplication)
                 .AddOrUpdateInstantiation(typeof(ProvideLoginMock),
                     async (app) =>
@@ -392,7 +386,11 @@ namespace EastFive.Azure.Tests.Authorization
                             onContent:
                                 (authenticatedAuthorization) =>
                                 {
-                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId);
+                                    var session = new Session
+                                    {
+                                        sessionId = Guid.NewGuid().AsRef<Session>(),
+                                        authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId),
+                                    };
                                     return comms.PatchAsync(session,
                                         onUpdatedBody:
                                             (updated) =>

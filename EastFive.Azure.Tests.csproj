@@ -150,6 +150,7 @@
     <Compile Include="Actions\RolesActions.cs" />
     <Compile Include="Actions\PasswordCredentialActions.cs" />
     <Compile Include="Actions\ClaimActions.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Helpers\CredentialHelpers.cs" />
     <Compile Include="Actions\AuthenticationRequestActions.cs" />
     <Compile Include="Actions\SessionHelpers.cs" />
