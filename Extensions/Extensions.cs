@@ -39,7 +39,7 @@ namespace EastFive.Azure.Tests.Extensions
 
                         // TODO: New comms here?
                         return await await comms.GetAsync(
-                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
+                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationRef.AssignQueryValue(authIdRef),
                             onContent:
                                 (authenticatedAuthorization) =>
                                 {
@@ -47,7 +47,7 @@ namespace EastFive.Azure.Tests.Extensions
                                     var session = new Session
                                     {
                                         sessionId = Guid.NewGuid().AsRef<Session>(),
-                                        authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId),
+                                        authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef),
                                     };
                                     return comms.PostAsync(session, // commsRedirect.PostAsync(session,
                                         onCreatedBody:

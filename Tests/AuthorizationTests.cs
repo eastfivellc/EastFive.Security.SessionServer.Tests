@@ -227,7 +227,7 @@ namespace EastFive.Azure.Tests.Authorization
             var authorizationIdSecure = Security.SecureGuid.Generate();
             var authorizationInvite = new Auth.Authorization
             {
-                authorizationId = authorizationIdSecure.AsRef<Auth.Authorization>(),
+                authorizationRef = authorizationIdSecure.AsRef<Auth.Authorization>(),
                 Method = mockAuthenticationMock.authenticationId,
                 LocationAuthenticationReturn = authReturnUrl,
             };
@@ -249,7 +249,7 @@ namespace EastFive.Azure.Tests.Authorization
                 {
                     accountMappingId = Guid.NewGuid(),
                     accountId = internalSystemUserId,
-                    authorization = authorizationInvite.authorizationId,
+                    authorization = authorizationInvite.authorizationRef,
                 },
                 onCreated: () => true));
 
@@ -279,9 +279,8 @@ namespace EastFive.Azure.Tests.Authorization
                         Assert.IsTrue(matchingAuthentications.Any());
                         return matchingAuthentications.First();
                     });
-
-
-            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationInvite.authorizationId.id);
+            
+            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationInvite.authorizationRef.id);
             var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
                 onRedirect:
                     async (urlRedirect, reason) =>
@@ -292,7 +291,7 @@ namespace EastFive.Azure.Tests.Authorization
 
                         // TODO: New comms here?
                         return await await comms.GetAsync(
-                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
+                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationRef.AssignQueryValue(authIdRef),
                             onContent:
                                 async (authenticatedAuthorization) =>
                                 {
@@ -311,7 +310,7 @@ namespace EastFive.Azure.Tests.Authorization
 
                                     var integration = new Auth.Integration
                                     {
-                                        integrationId = Guid.NewGuid(),
+                                        integrationRef = Guid.NewGuid().AsRef<Auth.Integration>(),
                                         accountId = internalSystemUserId,
                                         Method = mockAuthenticationMock.authenticationId,
                                         authorization = new RefOptional<Auth.Authorization>(authIdRef),
@@ -319,7 +318,7 @@ namespace EastFive.Azure.Tests.Authorization
                                     Assert.IsTrue(await comms.PostAsync(integration,
                                         onCreated: () => true));
 
-                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId);
+                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef);
                                     return await comms.PatchAsync(session,
                                         onUpdatedBody:
                                             (updated) =>
@@ -382,14 +381,14 @@ namespace EastFive.Azure.Tests.Authorization
 
                         // TODO: New comms here?
                         return await await comms.GetAsync(
-                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationId.AssignQueryValue(authIdRef),
+                            (Auth.Authorization authorizationGet) => authorizationGet.authorizationRef.AssignQueryValue(authIdRef),
                             onContent:
                                 (authenticatedAuthorization) =>
                                 {
                                     var session = new Session
                                     {
                                         sessionId = Guid.NewGuid().AsRef<Session>(),
-                                        authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationId),
+                                        authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef),
                                     };
                                     return comms.PatchAsync(session,
                                         onUpdatedBody:
