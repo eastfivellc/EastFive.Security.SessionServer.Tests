@@ -102,9 +102,6 @@ namespace EastFive.Azure.Tests
             };
         }
 
-        [Obsolete]
-        public Guid ActorId => throw new NotImplementedException();
-
         public IDictionary<string, string> Headers { get; set;  }
 
         #region Mockable Services
@@ -147,12 +144,6 @@ namespace EastFive.Azure.Tests
         }
 
         #endregion
-
-        #endregion
-
-
-        #region Depricated overrides
-
 
         #endregion
 

@@ -201,8 +201,8 @@
       <Project>{5bb52391-2704-44c0-bc8a-dbbe31498814}</Project>
       <Name>EastFive.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EastFive.SessionServer\EastFive.Azure.csproj">
-      <Project>{E2F3FCFB-89C8-47B3-B3D2-AE35E52A84FA}</Project>
+    <ProjectReference Include="..\EastFive.Azure\EastFive.Azure.csproj">
+      <Project>{e2f3fcfb-89c8-47b3-b3d2-ae35e52a84fa}</Project>
       <Name>EastFive.Azure</Name>
     </ProjectReference>
   </ItemGroup>
