@@ -44,10 +44,10 @@ namespace EastFive.Security.SessionServer.Api.Tests
                                         (responseAuthRequestPopulatedGet, fetchPopulated) =>
                                         {
                                             var authRequestPopulated = fetchPopulated();
-                                            Assert.IsTrue(authRequestPopulated.AuthorizationId.HasValue);
-                                            var userSes = new TestSession(authRequestPopulated.AuthorizationId.Value);
-                                            Assert.IsFalse(authRequestPopulated.Token.IsNullOrWhiteSpace());
-                                            userSes.LoadToken(authRequestPopulated.Token);
+                                            Assert.IsTrue(authRequestPopulated.authorization.HasValue);
+                                            var userSes = new TestSession(authRequestPopulated.authorization.id.Value);
+                                            Assert.IsFalse(authRequestPopulated.token.IsNullOrWhiteSpace());
+                                            userSes.LoadToken(authRequestPopulated.token);
 
                                             return true;
                                         });

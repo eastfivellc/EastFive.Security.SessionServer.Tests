@@ -10,28 +10,6 @@ namespace EastFive.Security.SessionServer.Api.Tests
     [TestClass]
     public class SessionTests
     {
-        [TestMethod]
-        public async Task CreateSessionTest()
-        {
-            await TestSession.StartAsync(async (testSession) =>
-            {
-                //TODO: SessionBuilder testSession.AddRequestPropertyFetch(AuthorizationClient.ServicePropertyDefinitions.AuthorizationClient, authClient);
-
-                await testSession.CreateSessionAsync();
-            });
-        }
-
-        [TestMethod]
-        public async Task CreateSessionWithCredentialsTest()
-        {
-            await TestSession.StartAsync(async (testSession) =>
-            {
-                //TODO: SessionBuilder testSession.AddRequestPropertyFetch(AuthorizationClient.ServicePropertyDefinitions.AuthorizationClient, authClient);
-
-                await true.ToTask(); // testSession.CreateSessionWithCredentialsAsync();
-            });
-        }
-
         //[TestMethod]
         //public async Task InvalidCredentials()
         //{
