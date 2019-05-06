@@ -406,9 +406,9 @@ namespace EastFive.Azure.Tests.Authorization
                                         sessionId = Guid.NewGuid().AsRef<Session>(),
                                         authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef),
                                     };
-                                    return comms.PatchAsync(session,
-                                        onUpdatedBody:
-                                            (updated) =>
+                                    return comms.PostAsync(session,
+                                        onCreatedBody:
+                                            (updated, contentType) =>
                                             {
                                                 return updated;
                                             });
