@@ -58,19 +58,7 @@ namespace EastFive.Azure.Tests.Persistence
             public IRef<RelatedModel> relatedRef;
 
             [Storage]
-            public IRefObj<object> refObjObj;
-
-            [Storage]
-            public IRefObj<RelatedModelObj> refObj;
-
-            [Storage]
             public IRefOptional<RelatedModel> relatedOptionalRef;
-
-            [Storage]
-            public IRefObjOptional<RelatedModelObj> relatedOptionalObjRef;
-
-            [Storage]
-            public IRefObjOptional<object> relatedOptionalObjObjRef;
 
             #endregion
 
@@ -92,19 +80,13 @@ namespace EastFive.Azure.Tests.Persistence
             public IRef<RelatedModel>[] arrayRef;
 
             [Storage]
-            public IRefObj<object>[] arrayRefObjObj;
-
-            [Storage]
-            public IRefObj<RelatedModelObj>[] arrayRefObj;
+            public IRef<IReferenceable>[] arrayRefObjObj;
 
             [Storage]
             public IRefOptional<RelatedModel>[] arrayRelatedOptionalRef;
 
             [Storage]
-            public IRefObjOptional<RelatedModelObj>[] arrayRelatedOptionalObjRef;
-
-            [Storage]
-            public IRefObjOptional<object>[] arrayRelatedOptionalObjObjRef;
+            public IRefOptional<IReferenceable>[] arrayRelatedOptionalObjObjRef;
 
             #endregion
         }
@@ -137,19 +119,13 @@ namespace EastFive.Azure.Tests.Persistence
         public IRef<RelatedModel> relatedRef;
 
         [Storage]
-        public IRefObj<object> refObjObj;
-
-        [Storage]
-        public IRefObj<RelatedModelObj> refObj;
+        public IRef<IReferenceable> refObjObj;
 
         [Storage]
         public IRefOptional<RelatedModel> relatedOptionalRef;
 
         [Storage]
-        public IRefObjOptional<RelatedModelObj> relatedOptionalObjRef;
-
-        [Storage]
-        public IRefObjOptional<object> relatedOptionalObjObjRef;
+        public IRefOptional<IReferenceable> relatedOptionalObjObjRef;
 
         [Storage]
         public EmbeddedModel embeddedModel;
@@ -177,19 +153,16 @@ namespace EastFive.Azure.Tests.Persistence
         public IRef<RelatedModel>[] arrayRef;
 
         [Storage]
-        public IRefObj<object>[] arrayRefObjObj;
+        public IRef<IReferenceable>[] arrayRefObjObj;
 
         [Storage]
-        public IRefObj<RelatedModelObj>[] arrayRefObj;
+        public IRef<RelatedModelObj>[] arrayRefObj;
 
         [Storage]
         public IRefOptional<RelatedModel>[] arrayRelatedOptionalRef;
 
         [Storage]
-        public IRefObjOptional<RelatedModelObj>[] arrayRelatedOptionalObjRef;
-
-        [Storage]
-        public IRefObjOptional<object>[] arrayRelatedOptionalObjObjRef;
+        public IRefOptional<IReferenceable>[] arrayRelatedOptionalObjObjRef;
 
         [Storage]
         public EmbeddedModel[] arrayEmbeddedModel;
@@ -211,19 +184,13 @@ namespace EastFive.Azure.Tests.Persistence
         public IDictionary<IRef<RelatedModel>, IRef<RelatedModel>[]> dictRef;
 
         [Storage]
-        public IDictionary<IRefObj<RelatedModelObj>, IRefObj<RelatedModelObj>[]> dictRefObj;
-
-        [Storage]
-        public IDictionary<IRefObj<object>, IRefObj<object>[]> dictRefObjectObj;
+        public IDictionary<IRef<IReferenceable>, IRef<IReferenceable>[]> dictRefObjectObj;
 
         [Storage]
         public IDictionary<IRefOptional<RelatedModel>, IRefOptional<RelatedModel>[]> dictRefOptional;
 
         [Storage]
-        public IDictionary<IRefObjOptional<RelatedModelObj>, IRefObjOptional<RelatedModelObj>[]> dictRefOptionalObj;
-
-        [Storage]
-        public IDictionary<IRefObjOptional<object>, IRefObjOptional<object>[]> dictRefOptionalObjObj;
+        public IDictionary<IRefOptional<IReferenceable>, IRefOptional<IReferenceable>[]> dictRefOptionalObjObj;
 
         [Storage]
         public IDictionary<EmbeddedModel, EmbeddedModel[]> dictEmbeddedModel;
@@ -250,42 +217,31 @@ namespace EastFive.Azure.Tests.Persistence
         [TestMethod]
         public async Task DataStoresCorrectly()
         {
-            var resourceRef = Guid.NewGuid().IRefStorage<ComplexStorageModel>();
+            var resourceRef = Guid.NewGuid().AsRef<ComplexStorageModel>();
 
             var embedded1 = new ComplexStorageModel.EmbeddedModel
             {
                 guid = Guid.NewGuid(),
                 objectInt = 3,
                 objectString = "Barf",
-                refObj = Guid.NewGuid().AsRefObj<RelatedModelObj>(),
-                refObjObj = Guid.NewGuid().AsRefObj<object>(),
-                relatedOptionalObjObjRef = Guid.NewGuid().AsRefObjOptional<object>(),
-                relatedOptionalObjRef = Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
-                relatedOptionalRef = Guid.NewGuid().AsRefOptional<RelatedModel>(),
+                relatedOptionalRef = Guid.NewGuid().AsRef<RelatedModel>().Optional(),
                 relatedRef = Guid.NewGuid().AsRef<RelatedModel>(),
                 stringProperty = "Food",
                 arrayGuid = new[] { Guid.NewGuid(), Guid.NewGuid() },
                 arrayObjectInt = new object[] { 1, 2 },
                 arrayObjectString = new object[] { null, "barF", string.Empty, "fooD" },
                 arrayRef = new[] { Guid.NewGuid().AsRef<RelatedModel>(), Guid.NewGuid().AsRef<RelatedModel>() },
-                arrayRefObj = new[] { Guid.NewGuid().AsRefObj<RelatedModelObj>(), Guid.NewGuid().AsRefObj<RelatedModelObj>() },
-                arrayRefObjObj = new[] { Guid.NewGuid().AsRefObj<object>(), Guid.NewGuid().AsRefObj<object>() },
+                arrayRefObjObj = new[] { Guid.NewGuid().AsRef<IReferenceable>(), Guid.NewGuid().AsRef<IReferenceable>() },
                 arrayRelatedOptionalObjObjRef = new []
                 {
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                    new TestRefObjOptional<object>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                },
-                arrayRelatedOptionalObjRef = new[]
-                {
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
-                    new TestRefObjOptional<RelatedModelObj>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>()
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
+                    default(Guid?).AsRefOptional<IReferenceable>(),
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
                 },
                 arrayRelatedOptionalRef = new[]
                 {
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
-                    new TestRefOptional<RelatedModel>(default(Guid?)),
+                    default(Guid?).AsRefOptional<RelatedModel>(),
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
                 },
                 arrayString = new[] { "BARRF", null, string.Empty, "food", },
@@ -295,10 +251,6 @@ namespace EastFive.Azure.Tests.Persistence
                 guid = Guid.NewGuid(),
                 objectInt = 4,
                 objectString = "barf",
-                refObj = Guid.NewGuid().AsRefObj<RelatedModelObj>(),
-                refObjObj = Guid.NewGuid().AsRefObj<object>(),
-                relatedOptionalObjObjRef = Guid.NewGuid().AsRefObjOptional<object>(),
-                relatedOptionalObjRef = Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
                 relatedOptionalRef = Guid.NewGuid().AsRefOptional<RelatedModel>(),
                 relatedRef = Guid.NewGuid().AsRef<RelatedModel>(),
                 stringProperty = "food",
@@ -306,24 +258,17 @@ namespace EastFive.Azure.Tests.Persistence
                 arrayObjectInt = new object[] { 1, 2 },
                 arrayObjectString = new object[] { "food", string.Empty, null, "bar" },
                 arrayRef = new[] { Guid.NewGuid().AsRef<RelatedModel>(), Guid.NewGuid().AsRef<RelatedModel>() },
-                arrayRefObj = new[] { Guid.NewGuid().AsRefObj<RelatedModelObj>(), Guid.NewGuid().AsRefObj<RelatedModelObj>() },
-                arrayRefObjObj = new[] { Guid.NewGuid().AsRefObj<object>(), Guid.NewGuid().AsRefObj<object>() },
+                arrayRefObjObj = new[] { Guid.NewGuid().AsRef<IReferenceable>(), Guid.NewGuid().AsRef<IReferenceable>() },
                 arrayRelatedOptionalObjObjRef = new[]
                 {
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                    new TestRefObjOptional<object>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                },
-                arrayRelatedOptionalObjRef = new[]
-                {
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
-                    new TestRefObjOptional<RelatedModelObj>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>()
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
+                    default(Guid?).AsRefOptional<IReferenceable>(),
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
                 },
                 arrayRelatedOptionalRef = new[]
                 {
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
-                    new TestRefOptional<RelatedModel>(default(Guid?)),
+                    default(Guid?).AsRefOptional<RelatedModel>(),
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
                 },
                 arrayString = new[] { "Barf", null, string.Empty, "bar", },
@@ -336,10 +281,8 @@ namespace EastFive.Azure.Tests.Persistence
                 objectInt = 3,
                 objectString = "food",
                 embeddedModel = embedded1,
-                refObj = Guid.NewGuid().AsRefObj<RelatedModelObj>(),
-                refObjObj = Guid.NewGuid().AsRefObj<object>(),
-                relatedOptionalObjObjRef = Guid.NewGuid().AsRefObjOptional<object>(),
-                relatedOptionalObjRef = Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
+                refObjObj = Guid.NewGuid().AsRef<IReferenceable>(),
+                relatedOptionalObjObjRef = Guid.NewGuid().AsRefOptional<IReferenceable>(),
                 relatedOptionalRef = Guid.NewGuid().AsRefOptional<RelatedModel>(),
                 relatedRef = Guid.NewGuid().AsRef<RelatedModel>(),
                 stringProperty = "barf",
@@ -353,24 +296,18 @@ namespace EastFive.Azure.Tests.Persistence
                 arrayObjectInt = new object[] { 1, 2 },
                 arrayObjectString = new object[] { string.Empty, "foo", "bar", null },
                 arrayRef = new[] { Guid.NewGuid().AsRef<RelatedModel>(), Guid.NewGuid().AsRef<RelatedModel>() },
-                arrayRefObj = new[] { Guid.NewGuid().AsRefObj<RelatedModelObj>(), Guid.NewGuid().AsRefObj<RelatedModelObj>() },
-                arrayRefObjObj = new[] { Guid.NewGuid().AsRefObj<object>(), Guid.NewGuid().AsRefObj<object>() },
+                arrayRefObj = new[] { Guid.NewGuid().AsRef<RelatedModelObj>(), Guid.NewGuid().AsRef<RelatedModelObj>() },
+                arrayRefObjObj = new[] { Guid.NewGuid().AsRef<IReferenceable>(), Guid.NewGuid().AsRef<IReferenceable>() },
                 arrayRelatedOptionalObjObjRef = new[]
                 {
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                    new TestRefObjOptional<object>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<object>(),
-                },
-                arrayRelatedOptionalObjRef = new[]
-                {
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>(),
-                    new TestRefObjOptional<RelatedModelObj>(default(Guid?)),
-                    Guid.NewGuid().AsRefObjOptional<RelatedModelObj>()
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
+                    default(Guid?).AsRefOptional<IReferenceable>(),
+                    Guid.NewGuid().AsRefOptional<IReferenceable>(),
                 },
                 arrayRelatedOptionalRef = new[]
                 {
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
-                    new TestRefOptional<RelatedModel>(default(Guid?)),
+                    default(Guid?).AsRefOptional<RelatedModel>(),
                     Guid.NewGuid().AsRefOptional<RelatedModel>(),
                 },
                 arrayString = new[] { "Bar", null, string.Empty, "Food", },
@@ -399,10 +336,13 @@ namespace EastFive.Azure.Tests.Persistence
                     return false;
                 }));
 
-            await resourceRef.ResolveAsync();
-            if (!resourceRef.value.HasValue)
-                Assert.Fail("Failed to load resource.");
-            var resourceLoaded = resourceRef.value.Value;
+            var resourceLoaded = await resourceRef.StorageGetAsync(
+                rl => rl,
+                () =>
+                {
+                    Assert.Fail("Failed to load resource.");
+                    throw new Exception();
+                });
 
             Assert.AreEqual(resource.id, resourceLoaded.id);
             Assert.AreEqual(resource.guid, resourceLoaded.guid);
@@ -417,10 +357,6 @@ namespace EastFive.Azure.Tests.Persistence
             Assert.AreEqual(resource.embeddedModel.objectString, resourceLoaded.embeddedModel.objectString);
             Assert.AreEqual(resource.embeddedModel.stringProperty, resourceLoaded.embeddedModel.stringProperty);
 
-            Assert.AreEqual(resource.embeddedModel.refObj.id, resourceLoaded.embeddedModel.refObj.id);
-            Assert.AreEqual(resource.embeddedModel.refObjObj.id, resourceLoaded.embeddedModel.refObjObj.id);
-            Assert.AreEqual(resource.embeddedModel.relatedOptionalObjObjRef.id, resourceLoaded.embeddedModel.relatedOptionalObjObjRef.id);
-            Assert.AreEqual(resource.embeddedModel.relatedOptionalObjRef.id, resourceLoaded.embeddedModel.relatedOptionalObjRef.id);
             Assert.AreEqual(resource.embeddedModel.relatedOptionalRef.id, resourceLoaded.embeddedModel.relatedOptionalRef.id);
             Assert.AreEqual(resource.embeddedModel.relatedRef.id, resourceLoaded.embeddedModel.relatedRef.id);
 
@@ -436,23 +372,17 @@ namespace EastFive.Azure.Tests.Persistence
             Assert.AreEqual(resource.embeddedModel.arrayString[3], resourceLoaded.embeddedModel.arrayString[3]);
             Assert.AreEqual(resource.embeddedModel.arrayRef[0].id, resourceLoaded.embeddedModel.arrayRef[0].id);
             Assert.AreEqual(resource.embeddedModel.arrayRef[1].id, resourceLoaded.embeddedModel.arrayRef[1].id);
-            Assert.AreEqual(resource.embeddedModel.arrayRefObj[0].id, resourceLoaded.embeddedModel.arrayRefObj[0].id);
-            Assert.AreEqual(resource.embeddedModel.arrayRefObj[1].id, resourceLoaded.embeddedModel.arrayRefObj[1].id);
             Assert.AreEqual(resource.embeddedModel.arrayRefObjObj[0].id, resourceLoaded.embeddedModel.arrayRefObjObj[0].id);
             Assert.AreEqual(resource.embeddedModel.arrayRefObjObj[1].id, resourceLoaded.embeddedModel.arrayRefObjObj[1].id);
             Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalObjObjRef[0].id, resourceLoaded.embeddedModel.arrayRelatedOptionalObjObjRef[0].id);
             Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalObjObjRef[1].id, resourceLoaded.embeddedModel.arrayRelatedOptionalObjObjRef[1].id);
-            Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalObjRef[0].id, resourceLoaded.embeddedModel.arrayRelatedOptionalObjRef[0].id);
-            Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalObjRef[1].id, resourceLoaded.embeddedModel.arrayRelatedOptionalObjRef[1].id);
             Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalRef[0].id, resourceLoaded.embeddedModel.arrayRelatedOptionalRef[0].id);
             Assert.AreEqual(resource.embeddedModel.arrayRelatedOptionalRef[1].id, resourceLoaded.embeddedModel.arrayRelatedOptionalRef[1].id);
 
             #endregion
 
-            Assert.AreEqual(resource.refObj.id, resourceLoaded.refObj.id);
             Assert.AreEqual(resource.refObjObj.id, resourceLoaded.refObjObj.id);
             Assert.AreEqual(resource.relatedOptionalObjObjRef.id, resourceLoaded.relatedOptionalObjObjRef.id);
-            Assert.AreEqual(resource.relatedOptionalObjRef.id, resourceLoaded.relatedOptionalObjRef.id);
             Assert.AreEqual(resource.relatedOptionalRef.id, resourceLoaded.relatedOptionalRef.id);
             Assert.AreEqual(resource.relatedRef.id, resourceLoaded.relatedRef.id);
             Assert.AreEqual(resource.resourceRef.id, resourceLoaded.resourceRef.id);
@@ -491,11 +421,6 @@ namespace EastFive.Azure.Tests.Persistence
             Assert.AreEqual(resource.arrayRelatedOptionalObjObjRef[0].id, resourceLoaded.arrayRelatedOptionalObjObjRef[0].id);
             Assert.AreEqual(resource.arrayRelatedOptionalObjObjRef[1].id, resourceLoaded.arrayRelatedOptionalObjObjRef[1].id);
             Assert.AreEqual(resource.arrayRelatedOptionalObjObjRef[2].id, resourceLoaded.arrayRelatedOptionalObjObjRef[2].id);
-
-            Assert.AreEqual(resource.arrayRelatedOptionalObjRef.Length, resourceLoaded.arrayRelatedOptionalObjRef.Length);
-            Assert.AreEqual(resource.arrayRelatedOptionalObjRef[0].id, resourceLoaded.arrayRelatedOptionalObjRef[0].id);
-            Assert.AreEqual(resource.arrayRelatedOptionalObjRef[1].id, resourceLoaded.arrayRelatedOptionalObjRef[1].id);
-            Assert.AreEqual(resource.arrayRelatedOptionalObjRef[2].id, resourceLoaded.arrayRelatedOptionalObjRef[2].id);
 
             Assert.AreEqual(resource.arrayRelatedOptionalRef.Length, resourceLoaded.arrayRelatedOptionalRef.Length);
             Assert.AreEqual(resource.arrayRelatedOptionalRef[0].id, resourceLoaded.arrayRelatedOptionalRef[0].id);
