@@ -1,4 +1,5 @@
 ﻿using EastFive.Api.Azure.Credentials;
+using EastFive.Api.Controllers;
 using EastFive.Api.Tests;
 using EastFive.Extensions;
 using EastFive.Security.SessionServer;
@@ -103,6 +104,17 @@ namespace EastFive.Azure.Tests
         }
 
         public IDictionary<string, string> Headers { get; set;  }
+
+        public delegate Task<bool> CanAdministerCredentialAsyncDelegate(Guid actorInQuestion, SessionToken security);
+
+        public CanAdministerCredentialAsyncDelegate CanAdministerCredential { get; set; }
+
+        public override Task<bool> CanAdministerCredentialAsync(Guid actorInQuestion, SessionToken security)
+        {
+            if(CanAdministerCredential.IsDefaultOrNull())
+                return base.CanAdministerCredentialAsync(actorInQuestion, security);
+            return CanAdministerCredential(actorInQuestion, security);
+        }
 
         #region Mockable Services
 

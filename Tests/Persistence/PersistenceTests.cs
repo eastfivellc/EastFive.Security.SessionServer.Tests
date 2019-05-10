@@ -29,12 +29,14 @@ namespace EastFive.Azure.Tests.Persistence
 
 
     [DataContract]
+    [StorageTable]
     public struct ComplexStorageModel : IReferenceable
     {
         public Guid id => resourceRef.id;
 
         public const string ResourceIdPropertyName = "id";
         [RowKey]
+        [StandardParititionKey]
         public IRef<ComplexStorageModel> resourceRef;
 
         [DataContract]
