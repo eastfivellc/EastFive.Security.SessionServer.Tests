@@ -50,16 +50,10 @@ namespace EastFive.Azure.Tests.Authorization
         {
             // var sessionFactory = new RestApplicationFactory();
             var sessionFactory = await TestApplicationFactory.InitAsync();
-            var superAdmin = await sessionFactory.SessionSuperAdminAsync();
 
-            (superAdmin as Api.Azure.AzureApplication)
-                .AddOrUpdateInstantiation(typeof(Auth.CredentialProviders.AdminLogin),
-                    async (app) =>
-                    {
-                        await 1.AsTask();
-                        return new Auth.CredentialProviders.AdminLogin();
-                    });
-            (superAdmin as Api.Azure.AzureApplication)
+            var user = sessionFactory.GetUnauthorizedSession();
+
+            (user as Api.Azure.AzureApplication)
                 .AddOrUpdateInstantiation(typeof(ProvideLoginMock),
                     async (app) =>
                     {
@@ -67,17 +61,7 @@ namespace EastFive.Azure.Tests.Authorization
                         return new ProvideLoginMock();
                     });
 
-            var authenticationAdmin = await superAdmin.GetAsync<Method, Method>(
-                onContents:
-                    authentications =>
-                    {
-                        var matchingAuthentications = authentications
-                            .Where(auth => auth.name == Auth.CredentialProviders.AdminLogin.IntegrationName);
-                        Assert.IsTrue(matchingAuthentications.Any());
-                        return matchingAuthentications.First();
-                    });
-
-            var mockAuthenticationMock = await superAdmin.GetAsync<Method, Method>(
+            var mockAuthenticationMock = await user.GetAsync<Method, Method>(
                 onContents:
                     authentications =>
                     {
@@ -87,65 +71,61 @@ namespace EastFive.Azure.Tests.Authorization
                         return matchingAuthentications.First();
                     });
 
+
+
+            // TODO: Only get Authorization with property header
+            // TODO: Can't get twice
+            // TODO: IF authorized, LocationAuthentication should not be set
+
+            // Create empty authorization
+
             var authReturnUrl = new Uri("http://example.com/authtest");
             var authorizationIdSecure = Security.SecureGuid.Generate();
-            var authorizationInvite = new Auth.Authorization
-            {
-                authorizationRef = authorizationIdSecure.AsRef<Auth.Authorization>(),
-                Method = mockAuthenticationMock.authenticationId,
-                LocationAuthenticationReturn = authReturnUrl,
-            };
-            var authroizationWithUrls = await superAdmin.PostAsync(authorizationInvite,
+            var authorizationUnmapped = await user.PostAsync(
+                    new Auth.Authorization
+                    {
+                        authorizationRef = authorizationIdSecure.AsRef<Auth.Authorization>(),
+                        Method = mockAuthenticationMock.authenticationId,
+                        LocationAuthenticationReturn = authReturnUrl,
+                    },
                 onCreatedBody:
                     (authorizationResponse, contentType) =>
                     {
-                        Assert.AreEqual(authorizationInvite.Method.id, authorizationResponse.Method.id);
+                        Assert.AreEqual(mockAuthenticationMock.id, authorizationResponse.Method.id);
                         Assert.AreEqual(authReturnUrl, authorizationResponse.LocationAuthenticationReturn);
                         return authorizationResponse;
                     });
 
+            #region User performs login
 
-            var externalSystemUserId = Guid.NewGuid().ToString();
+            var externalSystemUserId = Guid.NewGuid().ToString();// User performs login
             var internalSystemUserId = Guid.NewGuid();
-            // var mockParameters = ProvideLoginMock.GetParameters(externalSystemUserId);
-            Assert.IsTrue(await superAdmin.PostAsync(
-                new Auth.AccountMapping
-                {
-                    accountMappingId = Guid.NewGuid(),
-                    accountId = internalSystemUserId,
-                    authorization = authorizationInvite.authorizationRef,
-                },
-                onCreated: () => true));
+            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationUnmapped.authorizationRef.id);
+            var userPostLogin = sessionFactory.GetUnauthorizedSession();
 
-            var comms = sessionFactory.GetUnauthorizedSession();
-            var session = new Session
-            {
-                sessionId = Guid.NewGuid().AsRef<Session>(),
-            };
-            var token = await comms.PostAsync(session,
-                onCreatedBody: (sessionWithToken, contentType) => sessionWithToken.token);
-
-            (comms as Api.Azure.AzureApplication)
+            (userPostLogin as Api.Azure.AzureApplication)
                 .AddOrUpdateInstantiation(typeof(ProvideLoginMock),
                     async (app) =>
                     {
                         await 1.AsTask();
-                        return new ProvideLoginMock();
+                        var loginMock = new ProvideLoginAccountMock();
+                        loginMock.MapAccount =
+                            (externalKey, extraParameters, authenticationInner, authorization,
+                                baseUri, webApiApplication,
+                             onCreatedMapping,
+                             onAllowSelfServeAccounts,
+                             onInterceptProcess,
+                             onNoChange) =>
+                            {
+                                //Assert.AreEqual(externalSystemUserId, externalKey);
+                                return onAllowSelfServeAccounts().AsTask();
+                            };
+                        return loginMock;
                     });
 
-            // TODO: comms.LoadToken(session.token);
-            var authentication = await comms.GetAsync<Method, Method>(
-                onContents:
-                    authentications =>
-                    {
-                        var matchingAuthentications = authentications
-                            .Where(auth => auth.name == ProvideLoginMock.IntegrationName);
-                        Assert.IsTrue(matchingAuthentications.Any());
-                        return matchingAuthentications.First();
-                    });
+            #endregion
 
-            var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationInvite.authorizationRef.id);
-            var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
+            var authorizationToAthenticateSession = await await userPostLogin.GetAsync(responseResource,
                 onRedirect:
                     async (urlRedirect, reason) =>
                     {
@@ -153,7 +133,7 @@ namespace EastFive.Azure.Tests.Authorization
                         var authId = Guid.Parse(authIdStr);
                         var authIdRef = authId.AsRef<Auth.Authorization>();
 
-                        // TODO: New comms here?
+                        var comms = sessionFactory.GetUnauthorizedSession();
                         return await await comms.GetAsync(
                             (Auth.Authorization authorizationGet) => authorizationGet.authorizationRef.AssignQueryValue(authIdRef),
                             onContent:
@@ -182,8 +162,8 @@ namespace EastFive.Azure.Tests.Authorization
                                     Assert.IsTrue(await comms.PostAsync(integration,
                                         onCreated: () => true));
 
-                                    session.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef);
-                                    return await comms.PatchAsync(session,
+                                    sessionVirgin.authorization = new RefOptional<Auth.Authorization>(authenticatedAuthorization.authorizationRef);
+                                    return await comms.PatchAsync(sessionVirgin,
                                         onUpdatedBody:
                                             (updated) =>
                                             {
@@ -199,6 +179,10 @@ namespace EastFive.Azure.Tests.Authorization
         [TestMethod]
         public async Task CanLoginWithAuthenticationRequest()
         {
+
+            // TODO: Only get Authorization with property header
+            // TODO: Can't get twice
+            // TODO: IF authorized, LocationAuthentication should not be set
 
             // var sessionFactory = new RestApplicationFactory();
             var sessionFactory = await TestApplicationFactory.InitAsync();
@@ -352,6 +336,12 @@ namespace EastFive.Azure.Tests.Authorization
         [TestMethod]
         public async Task AuthenticationHandlesDirectLink()
         {
+
+            // TODO: Only get Authorization with property header
+            // TODO: Can't get twice
+            // TODO: IF authorized, LocationAuthentication should not be set
+
+
             // var sessionFactory = new RestApplicationFactory();
             var sessionFactory = await TestApplicationFactory.InitAsync();
 
@@ -367,10 +357,17 @@ namespace EastFive.Azure.Tests.Authorization
                         await 1.AsTask();
                         var accountMock = new ProvideLoginAccountMock();
                         accountMock.MapAccount =
-                            (externalKey) =>
+                            (subject,
+                                extraParameters, disard, authorization,
+                                baseUri,
+                                webApiApplication,
+                             onMapped,
+                             onSelfServe,
+                             onInterrupt,
+                             onNoChange) =>
                             {
-                                Assert.AreEqual(externalSystemUserId, externalKey);
-                                return internalSystemUserId;
+                                Assert.AreEqual(externalSystemUserId, subject);
+                                return onMapped(internalSystemUserId).AsTask();
                             };
                         return accountMock;
                     });
@@ -419,47 +416,5 @@ namespace EastFive.Azure.Tests.Authorization
 
         }
 
-        [TestMethod]
-        public async Task AuthorizationDuplicateCredentials()
-        {
-            await TestSession.StartAsync(async (testSession) =>
-            {
-                //var auth1 = await testSession.CreateAuthorizationAsync();
-                //var credential = await testSession.CreateCredentialImplicitAsync(auth1.Id);
-                //var auth2 = await testSession.CreateAuthorizationAsync();
-                //var duplicateCredentailResponse = await testSession.PostAsync<CredentialController>(new Resources.CredentialPost()
-                //{
-                //    Id = Guid.NewGuid(),
-                //    AuthorizationId = auth2.Id,
-                //    Method = credential.Method,
-                //    Provider = credential.Provider,
-                //    UserId = credential.UserId,
-                //    Token = credential.Token,
-                //});
-                //duplicateCredentailResponse.Assert(System.Net.HttpStatusCode.Conflict);
-                await true.AsTask();
-            });
-        }
-
-        [TestMethod]
-        public async Task VoucherAuthentication()
-        {
-            await TestSession.StartAsync(async (testSession) =>
-            {
-
-                //var auth = await testSession.CreateAuthorizationAsync();
-                //var credential = await testSession.CreateCredentialVoucherAsync(auth.Id);
-
-                //var session = new Resources.SessionPost()
-                //{
-                //    Id = Guid.NewGuid(),
-                //    AuthorizationId = auth.Id,
-                //    Credentials = credential,
-                //};
-                //await testSession.PostAsync<SessionController>(session)
-                //    .AssertAsync(System.Net.HttpStatusCode.Created);
-                await true.AsTask();
-            });
-        }
     }
 }
