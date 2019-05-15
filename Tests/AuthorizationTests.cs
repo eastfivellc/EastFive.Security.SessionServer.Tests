@@ -150,7 +150,7 @@ namespace EastFive.Azure.Tests.Authorization
 
                                     return await await newUser.GetAsync(responseResource,
                                         onRedirect:
-                                            (redirectionLocation, content) =>
+                                            (redirectionLocation) =>
                                             {
                                                 Assert.IsTrue(redirectionLocation.AbsoluteUri.StartsWith(redirectLocation.AbsoluteUri));
                                                 return newUser.PatchAsync(
@@ -275,7 +275,7 @@ namespace EastFive.Azure.Tests.Authorization
 
             var authorizationToAthenticateSession = await await userPostLogin.GetAsync(responseResource,
                 onRedirect:
-                    async (redirectionLocation, content) =>
+                    async (redirectionLocation) =>
                     {
                         // Map session to redirect
                         var authorizationRef = authorizationUnmapped.authorizationRef;
@@ -431,7 +431,7 @@ namespace EastFive.Azure.Tests.Authorization
             var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId, authorizationInvite.authorizationRef.id);
             var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
                 onRedirect:
-                    async (urlRedirect, reason) =>
+                    async (urlRedirect) =>
                     {
                         var authIdStr = urlRedirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier);
                         var authId = Guid.Parse(authIdStr);
@@ -532,7 +532,7 @@ namespace EastFive.Azure.Tests.Authorization
             var responseResource = ProvideLoginMock.GetResponse(externalSystemUserId);
             var authorizationToAthenticateSession = await await comms.GetAsync(responseResource,
                 onRedirect:
-                    async (urlRedirect, reason) =>
+                    async (urlRedirect) =>
                     {
                         var authIdStr = urlRedirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier);
                         var authId = Guid.Parse(authIdStr);

@@ -31,7 +31,7 @@ namespace EastFive.Azure.Tests.Extensions
 
             return await await comms.GetAsync(responseResource,
                 onRedirect:
-                    async (urlRedirect, reason) =>
+                    async (urlRedirect) =>
                     {
                         var authIdStr = urlRedirect.GetQueryParam(EastFive.Api.Azure.AzureApplication.QueryRequestIdentfier);
                         var authId = Guid.Parse(authIdStr);
