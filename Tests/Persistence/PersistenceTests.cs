@@ -213,6 +213,23 @@ namespace EastFive.Azure.Tests.Persistence
         public Guid id { get; set; }
     }
 
+    [DataContract]
+    [StorageTable]
+    public struct UserSuppliedPartitionStorageModel : IReferenceable
+    {
+        public Guid id => resourceRef.id;
+
+        [RowKey]
+        public IRef<UserSuppliedPartitionStorageModel> resourceRef;
+
+        [ParititionKey]
+        [Storage]
+        public string partitionKey;
+
+        [Storage]
+        public bool toggle;
+    }
+
     [TestClass]
     public class ResourceTests
     {
@@ -446,6 +463,136 @@ namespace EastFive.Azure.Tests.Persistence
             //Assert.AreEqual(resource.dictEmbeddedModel[resource.dictEmbeddedModel.Keys.First()][0].arrayRef[0].id, resourceLoaded.dictEmbeddedModel[resource.dictEmbeddedModel.Keys.First()][0].arrayRef[0].id);
             //Assert.AreEqual(resource.dictEmbeddedModel[resource.dictEmbeddedModel.Keys.Skip(1).First()][1].stringProperty, resourceLoaded.dictEmbeddedModel[resource.dictEmbeddedModel.Keys.Skip(1).First()][1].stringProperty);
 
+        }
+
+        [TestMethod]
+        public async Task CanSupplyPartition()
+        {
+            UserSuppliedPartitionStorageModel GetModel()
+            {
+                var resourceRef = Guid.NewGuid().AsRef<UserSuppliedPartitionStorageModel>();
+                var partitionKey = resourceRef.id.ToString("N").Substring(0, 3);
+                return new UserSuppliedPartitionStorageModel
+                {
+                    resourceRef = resourceRef,
+                    partitionKey = partitionKey,
+                };
+            }
+
+            var instance = GetModel();
+            var instanceWasCreated = await instance.StorageCreateAsync(
+                (discard) => true,
+                () => false);
+            Assert.IsTrue(instanceWasCreated);
+
+            instance.toggle = true;
+            var instanceWasReplaced = await instance.StorageReplaceAsync(
+                () => true,
+                (info, why) => false);
+            Assert.IsTrue(instanceWasReplaced);
+
+            var foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
+                (entity) => entity.AsOptional(),
+                () => default,
+                () => instance.partitionKey);
+            Assert.IsTrue(foundInstanceMaybe.HasValue);
+            Assert.AreEqual(true, foundInstanceMaybe.Value.toggle);
+
+            var instanceWasDeleted = await instance.resourceRef.StorageDeleteAsync(
+                () => true,
+                () => false,
+                () => instance.partitionKey);
+            Assert.IsTrue(instanceWasDeleted);
+
+            foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
+                (entity) => entity.AsOptional(),
+                () => default,
+                () => instance.partitionKey);
+            Assert.IsFalse(foundInstanceMaybe.HasValue);
+
+            instanceWasCreated = await instance.resourceRef.StorageCreateOrUpdateAsync(
+                (entity) =>
+                {
+                    entity.resourceRef = instance.resourceRef;
+                    entity.partitionKey = instance.partitionKey;
+                    return entity;
+                },
+                async (created, entity, saveAsync) =>
+                {
+                    if (created)
+                        await saveAsync(entity);
+                    return created;
+                },
+                () => instance.partitionKey);
+            Assert.IsTrue(instanceWasCreated);
+
+            // how to pass partitionkey here?
+            var foundInstances = await instance.id.AsArray().AsRefs<UserSuppliedPartitionStorageModel>()
+                .StorageGet()
+                .ToArrayAsync();
+            Assert.AreEqual(1, foundInstances.Length);
+
+            var instanceWasUpdated = await instance.resourceRef.StorageCreateOrUpdateAsync(
+                (entity) =>
+                {
+                    entity.resourceRef = instance.resourceRef;
+                    entity.partitionKey = instance.partitionKey;
+                    return entity;
+                },
+                async (created, entity, saveAsync) =>
+                {
+                    if (created)
+                        return false;
+
+                    await saveAsync(entity);
+                    return true;
+                },
+                () => instance.partitionKey);
+            Assert.IsTrue(instanceWasUpdated);
+
+            // how to pass partition key here?
+            instanceWasUpdated = await instance.resourceRef.StorageUpdateAsync(
+                async (entity, saveAsync) =>
+                {
+                    entity.toggle = true;
+                    await saveAsync(entity);
+                    return true;
+                },
+                () => false);
+            Assert.IsTrue(instanceWasUpdated);
+
+            Expression<Func<UserSuppliedPartitionStorageModel, bool>> partitionKeyQuery =
+                (item) => item.partitionKey == instance.partitionKey;
+            foundInstances = await partitionKeyQuery
+                .StorageQuery()
+                .ToArrayAsync();
+            Assert.AreEqual(1, foundInstances.Length);
+            Assert.AreEqual(true, foundInstances[0].toggle);
+
+            // how to pass partition key here?
+            var deleteResults = await instance.resourceRef.AsArray().Select(x => x.AsTask()).AsyncEnumerable()
+                .StorageDeleteBatch(
+                    (result) => result)
+                .ToArrayAsync();
+            Assert.AreEqual(1, deleteResults.Length);
+            Assert.IsTrue(deleteResults[0].HttpStatusCode < 300);
+
+            foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
+                (entity) => entity.AsOptional(),
+                () => default,
+                () => instance.partitionKey);
+            Assert.IsFalse(foundInstanceMaybe.HasValue);
+
+            var trans = await instance.StorageCreateTransactionAsync(
+                () => false);
+            var transResult = trans.Success(() => true, (ok) => false);
+            Assert.IsTrue(transResult);
+
+            deleteResults = await partitionKeyQuery
+                .StorageQueryDelete()
+                .ToArrayAsync();
+            Assert.AreEqual(1, deleteResults.Length);
+            Assert.IsTrue(deleteResults[0].HttpStatusCode < 300);
         }
     }
 }
