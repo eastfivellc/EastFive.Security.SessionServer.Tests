@@ -213,23 +213,6 @@ namespace EastFive.Azure.Tests.Persistence
         public Guid id { get; set; }
     }
 
-    [DataContract]
-    [StorageTable]
-    public struct UserSuppliedPartitionStorageModel : IReferenceable
-    {
-        public Guid id => resourceRef.id;
-
-        [RowKey]
-        public IRef<UserSuppliedPartitionStorageModel> resourceRef;
-
-        [ParititionKey]
-        [Storage]
-        public string partitionKey;
-
-        [Storage]
-        public bool toggle;
-    }
-
     [TestClass]
     public class ResourceTests
     {
@@ -465,6 +448,23 @@ namespace EastFive.Azure.Tests.Persistence
 
         }
 
+        [DataContract]
+        [StorageTable]
+        public struct UserSuppliedPartitionStorageModel : IReferenceable
+        {
+            public Guid id => resourceRef.id;
+
+            [RowKey]
+            public IRef<UserSuppliedPartitionStorageModel> resourceRef;
+
+            [ParititionKey]
+            //[Storage]
+            public string partitionKey;
+
+            [Storage]
+            public bool toggle;
+        }
+
         [TestMethod]
         public async Task CanSupplyPartition()
         {
@@ -501,7 +501,7 @@ namespace EastFive.Azure.Tests.Persistence
             var instanceWasDeleted = await instance.resourceRef.StorageDeleteAsync(
                 () => true,
                 () => false,
-                () => instance.partitionKey);
+                instance.partitionKey);
             Assert.IsTrue(instanceWasDeleted);
 
             foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
@@ -525,12 +525,6 @@ namespace EastFive.Azure.Tests.Persistence
                 },
                 () => instance.partitionKey);
             Assert.IsTrue(instanceWasCreated);
-
-            // how to pass partitionkey here?
-            var foundInstances = await instance.id.AsArray().AsRefs<UserSuppliedPartitionStorageModel>()
-                .StorageGet()
-                .ToArrayAsync();
-            Assert.AreEqual(1, foundInstances.Length);
 
             var instanceWasUpdated = await instance.resourceRef.StorageCreateOrUpdateAsync(
                 (entity) =>
@@ -563,19 +557,17 @@ namespace EastFive.Azure.Tests.Persistence
 
             Expression<Func<UserSuppliedPartitionStorageModel, bool>> partitionKeyQuery =
                 (item) => item.partitionKey == instance.partitionKey;
-            foundInstances = await partitionKeyQuery
+            var foundInstances = await partitionKeyQuery
                 .StorageQuery()
                 .ToArrayAsync();
             Assert.AreEqual(1, foundInstances.Length);
             Assert.AreEqual(true, foundInstances[0].toggle);
 
-            // how to pass partition key here?
-            var deleteResults = await instance.resourceRef.AsArray().Select(x => x.AsTask()).AsyncEnumerable()
-                .StorageDeleteBatch(
-                    (result) => result)
-                .ToArrayAsync();
-            Assert.AreEqual(1, deleteResults.Length);
-            Assert.IsTrue(deleteResults[0].HttpStatusCode < 300);
+            instanceWasDeleted = await instance.resourceRef.StorageDeleteAsync(
+                () => true,
+                () => false,
+                instance.partitionKey);
+            Assert.IsTrue(instanceWasDeleted);
 
             foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
                 (entity) => entity.AsOptional(),
@@ -588,7 +580,7 @@ namespace EastFive.Azure.Tests.Persistence
             var transResult = trans.Success(() => true, (ok) => false);
             Assert.IsTrue(transResult);
 
-            deleteResults = await partitionKeyQuery
+            var deleteResults = await partitionKeyQuery
                 .StorageQueryDelete()
                 .ToArrayAsync();
             Assert.AreEqual(1, deleteResults.Length);
