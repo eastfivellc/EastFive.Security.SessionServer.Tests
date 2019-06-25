@@ -550,7 +550,6 @@ namespace EastFive.Azure.Tests.Persistence
                 () => instance.partitionKey);
             Assert.IsTrue(instanceWasUpdated);
 
-            // how to pass partition key here?
             instanceWasUpdated = await instance.resourceRef.StorageUpdateAsync(
                 async (entity, saveAsync) =>
                 {
@@ -558,7 +557,8 @@ namespace EastFive.Azure.Tests.Persistence
                     await saveAsync(entity);
                     return true;
                 },
-                () => false);
+                () => false,
+                getPartitionKey: () => instance.partitionKey);
             Assert.IsTrue(instanceWasUpdated);
 
             Expression<Func<UserSuppliedPartitionStorageModel, bool>> partitionKeyQuery =
