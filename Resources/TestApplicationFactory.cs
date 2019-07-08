@@ -60,7 +60,7 @@ namespace EastFive.Azure.Tests
 
     public class TestApplication : Api.Azure.AzureApplication, ITestApplication
     {
-        public override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
             var response = await EastFive.Api.Modules.ControllerHandler.DirectSendAsync(this, request, default(CancellationToken),
                 (requestBack, token) =>
