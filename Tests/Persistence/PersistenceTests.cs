@@ -493,21 +493,18 @@ namespace EastFive.Azure.Tests.Persistence
 
             var foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
                 (entity) => entity.AsOptional(),
-                () => default,
-                () => instance.partitionKey);
+                () => default);
             Assert.IsTrue(foundInstanceMaybe.HasValue);
             Assert.AreEqual(true, foundInstanceMaybe.Value.toggle);
 
             var instanceWasDeleted = await instance.resourceRef.StorageDeleteAsync(
                 () => true,
-                () => false,
-                instance.partitionKey);
+                () => false);
             Assert.IsTrue(instanceWasDeleted);
 
             foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
                 (entity) => entity.AsOptional(),
-                () => default,
-                () => instance.partitionKey);
+                () => default);
             Assert.IsFalse(foundInstanceMaybe.HasValue);
 
             instanceWasCreated = await instance.resourceRef.StorageCreateOrUpdateAsync(
@@ -522,8 +519,7 @@ namespace EastFive.Azure.Tests.Persistence
                     if (created)
                         await saveAsync(entity);
                     return created;
-                },
-                () => instance.partitionKey);
+                });
             Assert.IsTrue(instanceWasCreated);
 
             var instanceWasUpdated = await instance.resourceRef.StorageCreateOrUpdateAsync(
@@ -540,8 +536,7 @@ namespace EastFive.Azure.Tests.Persistence
 
                     await saveAsync(entity);
                     return true;
-                },
-                () => instance.partitionKey);
+                });
             Assert.IsTrue(instanceWasUpdated);
 
             instanceWasUpdated = await instance.resourceRef.StorageUpdateAsync(
@@ -551,8 +546,7 @@ namespace EastFive.Azure.Tests.Persistence
                     await saveAsync(entity);
                     return true;
                 },
-                () => false,
-                getPartitionKey: () => instance.partitionKey);
+                () => false);
             Assert.IsTrue(instanceWasUpdated);
 
             Expression<Func<UserSuppliedPartitionStorageModel, bool>> partitionKeyQuery =
@@ -565,14 +559,12 @@ namespace EastFive.Azure.Tests.Persistence
 
             instanceWasDeleted = await instance.resourceRef.StorageDeleteAsync(
                 () => true,
-                () => false,
-                instance.partitionKey);
+                () => false);
             Assert.IsTrue(instanceWasDeleted);
 
             foundInstanceMaybe = await instance.resourceRef.StorageGetAsync(
                 (entity) => entity.AsOptional(),
-                () => default,
-                () => instance.partitionKey);
+                () => default);
             Assert.IsFalse(foundInstanceMaybe.HasValue);
 
             var trans = await instance.StorageCreateTransactionAsync(
