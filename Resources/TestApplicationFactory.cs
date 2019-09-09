@@ -28,7 +28,7 @@ namespace EastFive.Azure.Tests
             Func<ISendMessageService> messageService = () => default(ISendMessageService);
 
             var httpConfig = new HttpConfiguration();
-            ProvideLoginMock.method = CredentialValidationMethodTypes.Password;
+            //ProvideLoginMock.method = CredentialValidationMethodTypes.Password;
             var identityServices = new Func<
                         Func<IProvideAuthorization, IProvideAuthorization[]>,
                         Func<IProvideAuthorization[]>,
