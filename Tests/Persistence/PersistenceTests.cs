@@ -508,14 +508,10 @@ namespace EastFive.Azure.Tests.Persistence
             Assert.IsFalse(foundInstanceMaybe.HasValue);
 
             instanceWasCreated = await instance.resourceRef.StorageCreateOrUpdateAsync(
-                (entity) =>
-                {
-                    entity.resourceRef = instance.resourceRef;
-                    entity.partitionKey = instance.partitionKey;
-                    return entity;
-                },
                 async (created, entity, saveAsync) =>
                 {
+                    Assert.AreEqual(entity.resourceRef.id, instance.resourceRef.id);
+                    Assert.AreEqual(entity.partitionKey, instance.partitionKey);
                     if (created)
                         await saveAsync(entity);
                     return created;
@@ -523,12 +519,6 @@ namespace EastFive.Azure.Tests.Persistence
             Assert.IsTrue(instanceWasCreated);
 
             var instanceWasUpdated = await instance.resourceRef.StorageCreateOrUpdateAsync(
-                (entity) =>
-                {
-                    entity.resourceRef = instance.resourceRef;
-                    entity.partitionKey = instance.partitionKey;
-                    return entity;
-                },
                 async (created, entity, saveAsync) =>
                 {
                     if (created)
