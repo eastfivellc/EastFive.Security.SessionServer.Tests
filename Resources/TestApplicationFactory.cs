@@ -105,11 +105,11 @@ namespace EastFive.Azure.Tests
 
         public IDictionary<string, string> Headers { get; set;  }
 
-        public delegate Task<bool> CanAdministerCredentialAsyncDelegate(Guid actorInQuestion, SessionToken security);
+        public delegate Task<bool> CanAdministerCredentialAsyncDelegate(Guid actorInQuestion, Api.SessionToken security);
 
         public CanAdministerCredentialAsyncDelegate CanAdministerCredential { get; set; }
 
-        public override Task<bool> CanAdministerCredentialAsync(Guid actorInQuestion, SessionToken security)
+        public override Task<bool> CanAdministerCredentialAsync(Guid actorInQuestion, Api.SessionToken security)
         {
             if(CanAdministerCredential.IsDefaultOrNull())
                 return base.CanAdministerCredentialAsync(actorInQuestion, security);
